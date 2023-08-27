@@ -3,6 +3,7 @@
 
 int  main() {
     QuoridorBoard board;
+
     board.print();
     board.debug_setCornerHorizontalBarriers();
     board.print();

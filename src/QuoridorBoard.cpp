@@ -20,11 +20,11 @@ QuoridorBoard::~QuoridorBoard() {}
 
 void QuoridorBoard::print() {
   // Top row
-  cout << "┏━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┓\n";
+  cout << "  ┏━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┓\n";
   // Iterate over rows from top to bottom
   for (int y = 8; y >= 0; --y) {
     // Left edge
-    cout << "┃";
+    cout << y <<" ┃";
     // Iterate over columns from left to right
     for (int x = 0; x < 9; ++x) {
       // Draw player piece
@@ -43,7 +43,7 @@ void QuoridorBoard::print() {
     // Draw the horizontal edge
     if (y != 0) {
       // Left edge
-      cout << "┠";
+      cout << "  ┠";
       // Iterate over columns from left to right
       for (int x = 0; x < 9; ++x) {
         // Draw the veritcal barrier
@@ -57,7 +57,8 @@ void QuoridorBoard::print() {
     }
   }
   // Bottom row
-  cout << "┗━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┛\n" << endl;
+  cout << "  ┗━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┛\n";
+  cout << "    0   1   2   3   4   5   6   7   8  " << endl;
 }
 
 Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTables() {
@@ -101,7 +102,7 @@ Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTables() {
 void QuoridorBoard::debug_checkInvalidStates() {
   cout << "DEBUG: Checking for invalid board states." << endl;
 
-  if (players[0].position_x == 0 && players[1].position_x && players[0].position_y && players[1].position_y)
+  if ((players[0].position_x == 0 && players[1].position_x) && (players[0].position_y == players[1].position_y))
     cout << "ERROR: Invalid board state, players have the same position " << players[0].position_x << "-" << players[0].position_y << "." << endl;
 
   for (int x = 0; x < 8; x++) {
