@@ -16,14 +16,14 @@ struct Player {
   uint8_t barriers_left;
 };
 
-class QuoridorGame {
+class QuoridorBoard {
 
   BarrierGrid barriers;
   array<Player, 2> players;
 
 public:
-  QuoridorGame();
-  ~QuoridorGame();
+  QuoridorBoard();
+  ~QuoridorBoard();
 
   void print();
 };

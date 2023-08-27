@@ -1,10 +1,10 @@
 #include <iostream>
-#include "QuoridorGame.hpp"
+#include "QuoridorBoard.hpp"
 
 int  main() {
     std::cout << "Hello World!!" << std::endl;
 
-    QuoridorGame game;
+    QuoridorBoard board;
     game.print();
 
     return 0;

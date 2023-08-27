@@ -1,6 +1,6 @@
-#include "QuoridorGame.hpp"
+#include "QuoridorBoard.hpp"
 
-QuoridorGame::QuoridorGame() {
+QuoridorBoard::QuoridorBoard() {
   // Init barrier tables to zeros
   barriers.vertical.fill({});
   barriers.horizontal.fill({});
@@ -16,9 +16,9 @@ QuoridorGame::QuoridorGame() {
   players[1].barriers_left = 0;
 }
 
-QuoridorGame::~QuoridorGame() {}
+QuoridorBoard::~QuoridorBoard() {}
 
-void QuoridorGame::print() {
+void QuoridorBoard::print() {
   // Top row
   cout << "┏━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┓\n";
   // Iterate over rows from top to bottom
