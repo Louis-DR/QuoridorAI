@@ -5,7 +5,7 @@ int  main() {
     std::cout << "Hello World!!" << std::endl;
 
     QuoridorBoard board;
-    game.print();
+    board.print();
 
     return 0;
 }
