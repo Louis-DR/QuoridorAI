@@ -3,6 +3,7 @@
 #include <array>
 #include <cstdint>
 #include <iostream>
+#include <random>
 
 using namespace std;
 
@@ -29,4 +30,7 @@ public:
 
   void print();
   Array2D<Array2D<bool,9>,9> get_adjacencyTables();
+
+  void debug_set_randomBarriers();
+  void debug_set_randomPlayerPositions();
 };

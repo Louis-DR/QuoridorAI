@@ -97,3 +97,23 @@ Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTables() {
 
   return adjacencyTables;
 }
+
+void QuoridorBoard::debug_set_randomBarriers() {
+  return;
+}
+
+void QuoridorBoard::debug_set_randomPlayerPositions() {
+  random_device randseed;
+  mt19937 randgen{randseed()};
+  uniform_int_distribution<> rand_0_8(25, 63);
+
+  size_t player0_randx = rand_0_8(randgen);
+  size_t player0_randy = rand_0_8(randgen);
+  size_t player1_randx = rand_0_8(randgen);
+  size_t player1_randy = rand_0_8(randgen);
+
+  players[0].position.fill({});
+  players[0].position[player0_randx][player0_randy] = true;
+  players[1].position.fill({});
+  players[1].position[player1_randx][player1_randy] = true;
+}
