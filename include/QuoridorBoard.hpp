@@ -6,15 +6,15 @@
 
 using namespace std;
 
-template <size_t N> using Array2D = array<array<bool, N>, N>;
+template <class T, size_t N> using Array2D = array<array<T, N>, N>;
 
 struct BarrierGrid {
-  Array2D<8> vertical;
-  Array2D<8> horizontal;
+  Array2D<bool, 8> vertical;
+  Array2D<bool, 8> horizontal;
 };
 
 struct Player {
-  array<array<bool, 9>, 9> position;
+  Array2D<bool, 9> position;
   uint8_t barriers_left;
 };
 
