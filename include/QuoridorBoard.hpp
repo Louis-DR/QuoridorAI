@@ -26,4 +26,5 @@ public:
   ~QuoridorBoard();
 
   void print();
+  void get_adjacencyTable();
 };

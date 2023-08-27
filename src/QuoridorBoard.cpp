@@ -9,7 +9,7 @@ QuoridorBoard::QuoridorBoard() {
   players[0].position.fill({});
   players[0].position[4][0] = true;
   players[1].position.fill({});
-  players[0].position[4][8] = true;
+  players[1].position[4][8] = true;
 
   // Init barrier counts to zero for both players
   players[0].barriers_left = 0;
@@ -28,8 +28,8 @@ void QuoridorBoard::print() {
     // Iterate over columns from left to right
     for (int x = 0; x < 9; ++x) {
       // Draw player piece
-      if (players[0].position[x][y]) cout << " ◇ ";
-      else if (players[1].position[x][y]) cout << " ◆ ";
+      if (players[0].position[x][y]) cout << " ○ ";
+      else if (players[1].position[x][y]) cout << " ● ";
       else cout << "   ";
       // If not at the last column, draw the veritcal barrier
       if (x != 8) {
