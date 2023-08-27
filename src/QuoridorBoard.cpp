@@ -103,9 +103,26 @@ void QuoridorBoard::debug_clearBarriers() {
   barriers.horizontal.fill({});
 }
 
+void QuoridorBoard::debug_setCornerHorizontalBarriers() {
+  debug_clearBarriers();
+
+  barriers.horizontal[0][0] = true;
+  barriers.horizontal[0][7] = true;
+  barriers.horizontal[7][0] = true;
+  barriers.horizontal[7][7] = true;
+}
+
+void QuoridorBoard::debug_setCornerVerticalBarriers() {
+  debug_clearBarriers();
+
+  barriers.vertical[0][0] = true;
+  barriers.vertical[0][7] = true;
+  barriers.vertical[7][0] = true;
+  barriers.vertical[7][7] = true;
+}
+
 void QuoridorBoard::debug_setRandomBarriers() {
-  barriers.vertical.fill({});
-  barriers.horizontal.fill({});
+  debug_clearBarriers();
 
   random_device randseed;
   mt19937 randgen{randseed()};
