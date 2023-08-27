@@ -33,7 +33,7 @@ void QuoridorBoard::print() {
       else cout << "   ";
       // If not at the last column, draw the veritcal barrier
       if (x != 8) {
-        if ((y != 0 && barriers.vertical[x][y-1]) || (y != 8 && barriers.vertical[x][y])) cout << "│";
+        if ((y != 0 && barriers.vertical[x][y-1]) || (y != 8 && barriers.vertical[x][y])) cout << "┃";
         else cout << " ";
       }
     }
@@ -47,8 +47,8 @@ void QuoridorBoard::print() {
       // Iterate over columns from left to right
       for (int x = 0; x < 9; ++x) {
         // If not at the last column, draw the veritcal barrier
-        if (x != 8 && ((x != 0 && barriers.horizontal[x-1][y]) || (x != 8 && barriers.horizontal[x][y]))) cout << "───";
-        else cout << "   ";
+        if (x != 8 && ((x != 0 && barriers.horizontal[x-1][y]) || (x != 8 && barriers.horizontal[x][y]))) cout << "╼━╾";
+        else cout << "╴ ╶";
         // Draw the cross point
         if (x != 8) cout << "┼";
       }
@@ -58,4 +58,9 @@ void QuoridorBoard::print() {
   }
   // Bottom row
   cout << "┗━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┛\n" << endl;
+}
+
+Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTable() {
+  Array2D<Array2D<bool,9>,9> adjacencyTable;
+  return adjacencyTable;
 }
