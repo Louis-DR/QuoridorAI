@@ -1,5 +1,7 @@
 #include "Graph.hpp"
 #include <math.h>
+#include <limits.h>
+#include <set>
 Graph::Graph(int vertexCount)
 {
     this->vertexCount = vertexCount;
@@ -29,21 +31,6 @@ void Graph::removeEdge(int i, int j)
         adjMatrix[j][i] = false;
     }
 }
-int Graph::findMinDistanceNode()
-{
-    int minDistant = INT_MAX;
-    int minDistantNode;
-
-    for (int i = 0; i < vertexCount; i++)
-    {
-        if (minDistant > this->distance[i] && this->key[i] == 0)
-        {
-            minDistantNode = i;
-            minDistant = this->distance[i];
-        }
-    }
-    return minDistantNode;
-}
 
 std::vector<int> Graph::getNeighbors(int node)
 {
@@ -62,25 +49,25 @@ int Graph::coords2NodeId(int x, int y)
     return y * this->final_line_size + x;
 }
 
-bool Graph::isNodeOnFinishLine(int node, bool is_first_player) :
+bool Graph::isNodeOnFinishLine(int node, bool is_first_player)
 {
     if (is_first_player)
     {
-        if node
-            > this->vertexCount - this->final_line_size - 1 return true;
+        if (node > this->vertexCount - this->final_line_size - 1)
+            return true;
         else
             return false;
     }
     else
     {
-        if node
-            < this->final_line_size return true;
+        if (node < this->final_line_size)
+            return true;
         else
             return false;
     }
 }
 
-void Graph::getMinDistance(int startNode, bool is_first_player)
+int Graph::getMinDistance(int startNode, bool is_first_player)
 {
 
     this->distance[startNode] = 0;
@@ -88,16 +75,18 @@ void Graph::getMinDistance(int startNode, bool is_first_player)
     int minDistanceNode, i;
     std::set<int> frontier = set<int>();
     frontier.insert(startNode);
+    std::set<int>::iterator itr;
     while (true)
     {
         std::set<int> newFrontier = set<int>();
-        for (int i = 0, i < frontier.size(); i++)
+        for (itr = frontier.begin(); itr != frontier.end(); itr++)
         {
-            int node = frontier[i];
-            std::vector<int> temp = getNeighbors(node);
+            int node = *itr;
+            std::vector<int>
+                temp = getNeighbors(node);
             for (int j = 0; j < temp.size(); j++)
             {
-                int neighbor = neighbors[j];
+                int neighbor = temp[j];
                 if (this->isNodeOnFinishLine(neighbor, is_first_player))
                     return this->distance[node] + 1;
                 if (this->visited[neighbor])
