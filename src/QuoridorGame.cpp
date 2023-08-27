@@ -16,6 +16,8 @@ QuoridorGame::QuoridorGame() {
   players[1].barriers_left = 0;
 }
 
-QuoridorGame::~QuoridorGame() {
+QuoridorGame::~QuoridorGame() {}
+
+void QuoridorGame::print() {
 
 }
