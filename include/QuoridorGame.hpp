@@ -5,11 +5,20 @@
 
 using namespace std;
 
+struct BarrierGrid {
+    array<array<bool, 8>, 8> vertical;
+    array<array<bool, 8>, 8> horizontal;
+};
+
+struct Player {
+    array<array<bool, 9>, 9> position;
+    uint8_t barriers_left;
+};
+
 class QuoridorGame {
 
-array<array<bool, 8>, 8> barriers_vertical, barriers_horizontal;
-array<array<array<bool, 9>, 9>, 2> player_position;
-array<uint8_t, 2> player_barriers_left;
+BarrierGrid barriers;
+array<Player, 2> players;
 
 public:
     QuoridorGame();
