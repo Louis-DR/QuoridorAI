@@ -10,9 +10,11 @@ int  main() {
     board.print();
     board.debug_setRandomPlayerPositions();
     board.debug_setRandomBarriers();
+    board.debug_checkInvalidStates();
     board.print();
     board.debug_setRandomPlayerPositions();
     board.debug_setRandomBarriers();
+    board.debug_checkInvalidStates();
     board.print();
 
     return 0;

@@ -80,17 +80,17 @@ Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTables() {
   // Compute barriers
   for (int x = 0; x < 8; x++) {
     for (int y = 0; y < 8; y++) {
-      if (barriers.vertical[x][y]) {
-        adjacencyTables[x  ][y  ][x+1][y  ] = true;
-        adjacencyTables[x+1][y  ][x  ][y  ] = true;
-        adjacencyTables[x  ][y+1][x+1][y+1] = true;
-        adjacencyTables[x+1][y+1][x  ][y+1] = true;
-      }
       if (barriers.horizontal[x][y]) {
         adjacencyTables[x  ][y  ][x  ][y+1] = true;
         adjacencyTables[x  ][y+1][x  ][y  ] = true;
         adjacencyTables[x+1][y  ][x+1][y+1] = true;
         adjacencyTables[x+1][y+1][x+1][y  ] = true;
+      }
+      if (barriers.vertical[x][y]) {
+        adjacencyTables[x  ][y  ][x+1][y  ] = true;
+        adjacencyTables[x+1][y  ][x  ][y  ] = true;
+        adjacencyTables[x  ][y+1][x+1][y+1] = true;
+        adjacencyTables[x+1][y+1][x  ][y+1] = true;
       }
     }
   }
@@ -99,7 +99,25 @@ Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTables() {
 }
 
 void QuoridorBoard::debug_checkInvalidStates() {
+  cout << "DEBUG: Checking for invalid board states." << endl;
 
+  if (players[0].position_x == 0 && players[1].position_x && players[0].position_y && players[1].position_y)
+    cout << "ERROR: Invalid board state, players have the same position " << players[0].position_x << "-" << players[0].position_y << "." << endl;
+
+  for (int x = 0; x < 8; x++) {
+    for (int y = 0; y < 8; y++) {
+      if (barriers.horizontal[x][y]) {
+        if (barriers.vertical[x][y])
+          cout << "ERROR: Invalid board state, both vertical and horizontal barriers at position " << x << "-" << y << endl;
+        if (x != 7 && barriers.horizontal[x+1][y])
+          cout << "ERROR: Invalid board state, overlapping horizontal barriers at positions " << x << "-" << y << " and " << x+1 << "-" << y << endl;
+      }
+      else if (barriers.vertical[x][y]) {
+        if (y != 7 && barriers.vertical[x][y+1])
+          cout << "ERROR: Invalid board state, overlapping vertical barriers at positions " << x << "-" << y << " and " << x << "-" << y+1 << endl;
+      }
+    }
+  }
 }
 
 void QuoridorBoard::debug_clearBarriers() {
