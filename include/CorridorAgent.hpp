@@ -1,8 +1,9 @@
 #pragma once
 
-using namespace std;
 #include "QuoridorBoard.hpp"
 #include "Graph.hpp"
+
+using namespace std;
 
 class CorridorAgent
 {
