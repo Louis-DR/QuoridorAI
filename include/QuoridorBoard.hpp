@@ -15,7 +15,8 @@ struct BarrierGrid {
 };
 
 struct Player {
-  Array2D<bool,9> position;
+  uint8_t position_x;
+  uint8_t position_y;
   uint8_t barriers_left;
 };
 

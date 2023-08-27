@@ -6,10 +6,10 @@ QuoridorBoard::QuoridorBoard() {
   barriers.horizontal.fill({});
 
   // Init position of both players
-  players[0].position.fill({});
-  players[0].position[4][0] = true;
-  players[1].position.fill({});
-  players[1].position[4][8] = true;
+  players[0].position_x = 4;
+  players[0].position_y = 0;
+  players[1].position_x = 4;
+  players[1].position_y = 8;
 
   // Init barrier counts to zero for both players
   players[0].barriers_left = 0;
@@ -28,8 +28,8 @@ void QuoridorBoard::print() {
     // Iterate over columns from left to right
     for (int x = 0; x < 9; ++x) {
       // Draw player piece
-      if (players[0].position[x][y]) cout << " ○ ";
-      else if (players[1].position[x][y]) cout << " ● ";
+      if (x == players[0].position_x && y == players[0].position_y) cout << " ○ ";
+      else if (x == players[1].position_x && y == players[1].position_y) cout << " ● ";
       else cout << "   ";
       // If not at the last column, draw the veritcal barrier
       if (x != 8) {
@@ -107,13 +107,8 @@ void QuoridorBoard::debug_set_randomPlayerPositions() {
   mt19937 randgen{randseed()};
   uniform_int_distribution<> rand_0_8(25, 63);
 
-  size_t player0_randx = rand_0_8(randgen);
-  size_t player0_randy = rand_0_8(randgen);
-  size_t player1_randx = rand_0_8(randgen);
-  size_t player1_randy = rand_0_8(randgen);
-
-  players[0].position.fill({});
-  players[0].position[player0_randx][player0_randy] = true;
-  players[1].position.fill({});
-  players[1].position[player1_randx][player1_randy] = true;
+  players[0].position_x = rand_0_8(randgen);
+  players[0].position_y = rand_0_8(randgen);
+  players[1].position_x = rand_0_8(randgen);
+  players[1].position_y = rand_0_8(randgen);
 }
