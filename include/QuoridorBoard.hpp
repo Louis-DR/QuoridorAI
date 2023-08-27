@@ -6,9 +6,11 @@
 
 using namespace std;
 
+template <size_t N> using Array2D = array<array<bool, N>, N>;
+
 struct BarrierGrid {
-  array<array<bool, 8>, 8> vertical;
-  array<array<bool, 8>, 8> horizontal;
+  Array2D<8> vertical;
+  Array2D<8> horizontal;
 };
 
 struct Player {
