@@ -11,9 +11,9 @@ QuoridorBoard::QuoridorBoard() {
   players[1].position_x = 4;
   players[1].position_y = 8;
 
-  // Init barrier counts to zero for both players
-  players[0].barriers_left = 0;
-  players[1].barriers_left = 0;
+  // Init barrier counts to 10 for both players
+  players[0].barriers_left = 10;
+  players[1].barriers_left = 10;
 }
 
 QuoridorBoard::~QuoridorBoard() {}
@@ -47,7 +47,7 @@ void QuoridorBoard::print() {
       // Iterate over columns from left to right
       for (int x = 0; x < 9; ++x) {
         // If not at the last column, draw the veritcal barrier
-        if (x != 8 && ((x != 0 && barriers.horizontal[x-1][y]) || (x != 8 && barriers.horizontal[x][y]))) cout << "╼━╾";
+        if (x != 8 && ((x != 0 && barriers.horizontal[x-1][y-1]) || (x != 8 && barriers.horizontal[x][y-1]))) cout << "╼━╾";
         else cout << "╴ ╶";
         // Draw the cross point
         if (x != 8) cout << "┼";
@@ -98,14 +98,36 @@ Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTables() {
   return adjacencyTables;
 }
 
-void QuoridorBoard::debug_set_randomBarriers() {
-  return;
+void QuoridorBoard::debug_clearBarriers() {
+  barriers.vertical.fill({});
+  barriers.horizontal.fill({});
 }
 
-void QuoridorBoard::debug_set_randomPlayerPositions() {
+void QuoridorBoard::debug_setRandomBarriers() {
+  barriers.vertical.fill({});
+  barriers.horizontal.fill({});
+
   random_device randseed;
   mt19937 randgen{randseed()};
-  uniform_int_distribution<> rand_0_8(25, 63);
+  uniform_int_distribution<> rand_0_20(0,20);
+  uniform_int_distribution<> rand_0_7(0,7);
+  uniform_int_distribution<> rand_0_1(0,1);
+
+  uint8_t number_barriers = rand_0_20(randgen);
+
+  for (int barrier = 0; barrier < number_barriers; ++barrier) {
+    bool orientation = rand_0_1(randgen);
+    size_t x = rand_0_7(randgen);
+    size_t y = rand_0_7(randgen);
+    if (orientation) barriers.horizontal[x][y] = true;
+    else barriers.vertical[x][y] = true;
+  }
+}
+
+void QuoridorBoard::debug_setRandomPlayerPositions() {
+  random_device randseed;
+  mt19937 randgen{randseed()};
+  uniform_int_distribution<> rand_0_8(0,8);
 
   players[0].position_x = rand_0_8(randgen);
   players[0].position_y = rand_0_8(randgen);

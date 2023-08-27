@@ -35,6 +35,7 @@ public:
   void print();
   Array2D<Array2D<bool, 9>, 9> get_adjacencyTables();
 
-  void debug_set_randomBarriers();
-  void debug_set_randomPlayerPositions();
+  void debug_clearBarriers();
+  void debug_setRandomBarriers();
+  void debug_setRandomPlayerPositions();
 };
