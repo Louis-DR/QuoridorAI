@@ -1,21 +1,19 @@
 #include "Graph.hpp"
-#include <math.h>
-#include <limits.h>
-#include <set>
-Graph::Graph(int vertexCount)
+
+Graph::Graph(uint8_t vertexCount)
 {
     this->vertexCount = vertexCount;
     this->visited = std::vector<bool>(vertexCount, false);
-    this->distance = std::vector<int>(vertexCount, INT_MAX);
-    this->parent = std::vector<int>(vertexCount, -1);
-    this->final_line_size = static_cast<int>(sqrt(vertexCount));
+    this->distance = std::vector<uint8_t>(vertexCount, 255);
+    this->parent = std::vector<uint8_t>(vertexCount, -1);
+    this->final_line_size = static_cast<uint8_t>(sqrt(vertexCount));
     this->adjMatrix = std::vector<std::vector<bool>>(vertexCount, std::vector<bool>(vertexCount, false));
 }
 Graph::~Graph()
 {
 }
 
-void Graph::addEdge(int i, int j)
+void Graph::addEdge(uint8_t i, uint8_t j)
 {
     if (i >= 0 && i < vertexCount && j >= 0 && j < vertexCount)
     {
@@ -23,7 +21,7 @@ void Graph::addEdge(int i, int j)
         adjMatrix[j][i] = true;
     }
 }
-void Graph::removeEdge(int i, int j)
+void Graph::removeEdge(uint8_t i, uint8_t j)
 {
     if (i >= 0 && i < vertexCount && j >= 0 && j < vertexCount)
     {
@@ -32,10 +30,10 @@ void Graph::removeEdge(int i, int j)
     }
 }
 
-std::vector<int> Graph::getNeighbors(int node)
+std::vector<uint8_t> Graph::getNeighbors(uint8_t node)
 {
-    std::vector<int> neighbors;
-    for (int i = 0; i < vertexCount; i++)
+    std::vector<uint8_t> neighbors;
+    for (size_t i = 0; i < vertexCount; i++)
     {
         if (adjMatrix[node][i])
         {
@@ -44,12 +42,12 @@ std::vector<int> Graph::getNeighbors(int node)
     }
     return neighbors;
 }
-int Graph::coords2NodeId(int x, int y)
+uint8_t Graph::coords2NodeId(uint8_t x, uint8_t y)
 {
     return y * this->final_line_size + x;
 }
 
-bool Graph::isNodeOnFinishLine(int node, bool is_first_player)
+bool Graph::isNodeOnFinishLine(uint8_t node, bool is_first_player)
 {
     if (is_first_player)
     {
@@ -67,26 +65,26 @@ bool Graph::isNodeOnFinishLine(int node, bool is_first_player)
     }
 }
 
-int Graph::getMinDistance(int startNode, bool is_first_player)
+uint8_t Graph::getMinDistance(uint8_t startNode, bool is_first_player)
 {
 
     this->distance[startNode] = 0;
 
-    int minDistanceNode, i;
-    std::set<int> frontier = set<int>();
+    uint8_t minDistanceNode, i;
+    std::set<uint8_t> frontier = set<uint8_t>();
     frontier.insert(startNode);
-    std::set<int>::iterator itr;
+    std::set<uint8_t>::iterator itr;
     while (true)
     {
-        std::set<int> newFrontier = set<int>();
+        std::set<uint8_t> newFrontier = set<uint8_t>();
         for (itr = frontier.begin(); itr != frontier.end(); itr++)
         {
-            int node = *itr;
-            std::vector<int>
+            uint8_t node = *itr;
+            std::vector<uint8_t>
                 temp = getNeighbors(node);
-            for (int j = 0; j < temp.size(); j++)
+            for (size_t j = 0; j < temp.size(); j++)
             {
-                int neighbor = temp[j];
+                uint8_t neighbor = temp[j];
                 if (this->isNodeOnFinishLine(neighbor, is_first_player))
                     return this->distance[node] + 1;
                 if (this->visited[neighbor])
@@ -97,7 +95,7 @@ int Graph::getMinDistance(int startNode, bool is_first_player)
                 this->parent[neighbor] = node;
             }
             frontier = newFrontier;
-            newFrontier = set<int>();
+            newFrontier = set<uint8_t>();
         }
     }
 }
