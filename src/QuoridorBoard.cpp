@@ -46,8 +46,8 @@ void QuoridorBoard::print() {
       cout << "┠";
       // Iterate over columns from left to right
       for (int x = 0; x < 9; ++x) {
-        // If not at the last column, draw the veritcal barrier
-        if (x != 8 && ((x != 0 && barriers.horizontal[x-1][y-1]) || (x != 8 && barriers.horizontal[x][y-1]))) cout << "╼━╾";
+        // Draw the veritcal barrier
+        if ((x != 0 && barriers.horizontal[x-1][y-1]) || (x != 8 && barriers.horizontal[x][y-1])) cout << "╼━╾";
         else cout << "╴ ╶";
         // Draw the cross point
         if (x != 8) cout << "┼";
@@ -98,13 +98,20 @@ Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTables() {
   return adjacencyTables;
 }
 
+void QuoridorBoard::debug_checkInvalidStates() {
+
+}
+
 void QuoridorBoard::debug_clearBarriers() {
+  cout << "DEBUG: Clearing the barriers." << endl;
   barriers.vertical.fill({});
   barriers.horizontal.fill({});
 }
 
 void QuoridorBoard::debug_setCornerHorizontalBarriers() {
   debug_clearBarriers();
+
+  cout << "DEBUG: Placing only horizontal barriers at the corners." << endl;
 
   barriers.horizontal[0][0] = true;
   barriers.horizontal[0][7] = true;
@@ -115,6 +122,8 @@ void QuoridorBoard::debug_setCornerHorizontalBarriers() {
 void QuoridorBoard::debug_setCornerVerticalBarriers() {
   debug_clearBarriers();
 
+  cout << "DEBUG: Placing only vertical barriers at the corners." << endl;
+
   barriers.vertical[0][0] = true;
   barriers.vertical[0][7] = true;
   barriers.vertical[7][0] = true;
@@ -123,6 +132,8 @@ void QuoridorBoard::debug_setCornerVerticalBarriers() {
 
 void QuoridorBoard::debug_setRandomBarriers() {
   debug_clearBarriers();
+
+  cout << "DEBUG: Placing barriers at random locations." << endl;
 
   random_device randseed;
   mt19937 randgen{randseed()};
@@ -142,6 +153,8 @@ void QuoridorBoard::debug_setRandomBarriers() {
 }
 
 void QuoridorBoard::debug_setRandomPlayerPositions() {
+  cout << "DEBUG: Placing the players at random positions." << endl;
+
   random_device randseed;
   mt19937 randgen{randseed()};
   uniform_int_distribution<> rand_0_8(0,8);

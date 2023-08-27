@@ -30,6 +30,7 @@ public:
   void print();
   Array2D<Array2D<bool, 9>, 9> get_adjacencyTables();
 
+  void debug_checkInvalidStates();
   void debug_clearBarriers();
   void debug_setCornerHorizontalBarriers();
   void debug_setCornerVerticalBarriers();
