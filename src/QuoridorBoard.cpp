@@ -60,7 +60,40 @@ void QuoridorBoard::print() {
   cout << "┗━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┛\n" << endl;
 }
 
-Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTable() {
-  Array2D<Array2D<bool,9>,9> adjacencyTable;
-  return adjacencyTable;
+Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTables() {
+  Array2D<Array2D<bool,9>,9> adjacencyTables;
+
+  // Generate table without any obstacle
+  for (int x = 0; x < 9; x++) {
+    for (int y = 0; y < 9; y++) {
+      // Init to no move possible
+      adjacencyTables[x][y].fill({});
+
+      // Immediate adjacent cells
+      if (x != 0) adjacencyTables[x][y][x-1][y  ] = true;
+      if (x != 8) adjacencyTables[x][y][x+1][y  ] = true;
+      if (y != 0) adjacencyTables[x][y][x  ][y-1] = true;
+      if (y != 8) adjacencyTables[x][y][x  ][y+1] = true;
+    }
+  }
+
+  // Compute barriers
+  for (int x = 0; x < 8; x++) {
+    for (int y = 0; y < 8; y++) {
+      if (barriers.vertical[x][y]) {
+        adjacencyTables[x  ][y  ][x+1][y  ] = true;
+        adjacencyTables[x+1][y  ][x  ][y  ] = true;
+        adjacencyTables[x  ][y+1][x+1][y+1] = true;
+        adjacencyTables[x+1][y+1][x  ][y+1] = true;
+      }
+      if (barriers.horizontal[x][y]) {
+        adjacencyTables[x  ][y  ][x  ][y+1] = true;
+        adjacencyTables[x  ][y+1][x  ][y  ] = true;
+        adjacencyTables[x+1][y  ][x+1][y+1] = true;
+        adjacencyTables[x+1][y+1][x+1][y  ] = true;
+      }
+    }
+  }
+
+  return adjacencyTables;
 }
