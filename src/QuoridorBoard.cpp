@@ -60,6 +60,7 @@ void QuoridorBoard::print() {
   cout << "┗━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┛\n" << endl;
 }
 
-// void QuoridorBoard::get_adjacencyTable() {
-//   array<>
-// }
+Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTable() {
+  Array2D<Array2D<bool,9>,9> adjacencyTable;
+  return adjacencyTable;
+}
