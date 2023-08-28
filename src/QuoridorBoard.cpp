@@ -18,7 +18,12 @@ QuoridorBoard::QuoridorBoard() {
 
 QuoridorBoard::~QuoridorBoard() {}
 
-void QuoridorBoard::print() {
+void QuoridorBoard::print(bool adjacency_table_enable, size_t adjacency_table_x, size_t adjacency_table_y) {
+  Array2D<bool,9> adjacency_table;
+  if (adjacency_table_enable) {
+    adjacency_table = get_adjacencyTables()[adjacency_table_x][adjacency_table_y];
+  }
+
   // Top row
   std::cout << "      0   1   2   3   4   5   6   7    \n";
   std::cout << "  ┏━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┓\n";
@@ -31,6 +36,7 @@ void QuoridorBoard::print() {
       // Draw player piece
       if (x == players[0].position_x && y == players[0].position_y) std::cout << " ○ ";
       else if (x == players[1].position_x && y == players[1].position_y) std::cout << " ● ";
+      else if (adjacency_table_enable && adjacency_table[x][y]) std::cout << " ⦾ ";
       else std::cout << "   ";
       // If not at the last column, draw the veritcal barrier
       if (x != 8) {
@@ -245,7 +251,7 @@ void QuoridorBoard::startInteractiveMode() {
       }
       auto cmd_x = stoi(cmd_split[1]);
       auto cmd_y = stoi(cmd_split[2]);
-      debug_printAdjacentTable(cmd_x, cmd_y);
+      print(true, cmd_x, cmd_y);
     } else {
       std::cout << "ERROR: Unknown command '" << cmd_op << "'." << endl;
     }
@@ -349,8 +355,4 @@ void QuoridorBoard::debug_setRandomPlayerPositions() {
   players[0].position_y = rand_0_8(randgen);
   players[1].position_x = rand_0_8(randgen);
   players[1].position_y = rand_0_8(randgen);
-}
-
-void QuoridorBoard::debug_printAdjacentTable(size_t x, size_t y) {
-  Array2D<Array2D<bool,9>,9> adjacencyTables = get_adjacencyTables();
 }

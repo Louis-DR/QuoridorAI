@@ -34,7 +34,7 @@ public:
   array<Player,2> players;
   BoardConfig config;
 
-  void print();
+  void print(bool adjacent_table_enable = false, size_t adjacent_table_x = 0, size_t adjacent_table_y = 0);
   Array2D<Array2D<bool,9>,9> get_adjacencyTables();
 
   void startInteractiveMode();
