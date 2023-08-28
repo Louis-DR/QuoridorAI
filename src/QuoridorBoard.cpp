@@ -18,11 +18,11 @@ QuoridorBoard::QuoridorBoard() {
 
 QuoridorBoard::~QuoridorBoard() {}
 
-void QuoridorBoard::print(bool adjacency_table_enable, size_t adjacency_table_x, size_t adjacency_table_y) {
+void QuoridorBoard::print(PrintArgs args) {
   // If enabling drawing of adjacency table, then compute it
   Array2D<bool,9> adjacency_table;
-  if (adjacency_table_enable)
-    adjacency_table = get_adjacencyTables()[adjacency_table_x][adjacency_table_y];
+  if (args.adjacent_table_enable)
+    adjacency_table = get_adjacencyTables()[args.adjacent_table_x][args.adjacent_table_y];
 
   // Top row
   std::cout << "      0   1   2   3   4   5   6   7    \n";
@@ -38,7 +38,7 @@ void QuoridorBoard::print(bool adjacency_table_enable, size_t adjacency_table_x,
         std::cout << " ○ ";
       else if (x == players[1].position_x && y == players[1].position_y)
         std::cout << " ● ";
-      else if (adjacency_table_enable && adjacency_table[x][y])
+      else if (args.adjacent_table_enable && adjacency_table[x][y])
         std::cout << " ⦾ ";
       else
         std::cout << "   ";
@@ -460,9 +460,9 @@ void QuoridorBoard::startInteractiveMode() {
         std::cout << "ERROR: Not enough arguments for command 'adjacent'." << endl;
         continue;
       }
-      auto cmd_x = stoi(cmd_split[1]);
-      auto cmd_y = stoi(cmd_split[2]);
-      print(true, cmd_x, cmd_y);
+      uint8_t cmd_x = stoi(cmd_split[1]);
+      uint8_t cmd_y = stoi(cmd_split[2]);
+      print({.adjacent_table_enable=true, .adjacent_table_x=cmd_x, .adjacent_table_y=cmd_y});
 
     // Invalid command
     } else {
@@ -552,8 +552,8 @@ void QuoridorBoard::debug_setRandomBarriers() {
   // Place barriers at random positions without checking for any overlap
   for (int barrier = 0; barrier < number_barriers; ++barrier) {
     bool orientation = rand_0_1(randgen);
-    size_t x = rand_0_7(randgen);
-    size_t y = rand_0_7(randgen);
+    uint8_t x = rand_0_7(randgen);
+    uint8_t y = rand_0_7(randgen);
     if (orientation)
       barriers.horizontal[x][y] = true;
     else

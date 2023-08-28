@@ -26,6 +26,12 @@ struct BoardConfig {
   bool interactive_auto_print = false;
 };
 
+struct PrintArgs {
+  bool adjacent_table_enable = false;
+  uint8_t adjacent_table_x = 0;
+  uint8_t adjacent_table_y = 0;
+};
+
 class QuoridorBoard {
 public:
   QuoridorBoard();
@@ -35,7 +41,7 @@ public:
   array<Player,2> players;
   BoardConfig     config;
 
-  void print(bool adjacent_table_enable = false, size_t adjacent_table_x = 0, size_t adjacent_table_y = 0);
+  void print(PrintArgs args = {});
   Array2D<Array2D<bool,9>,9> get_adjacencyTables();
   BarrierGrid get_legalBarrierPlacements();
 
@@ -48,5 +54,5 @@ public:
   void debug_setCornerVerticalBarriers();
   void debug_setRandomBarriers();
   void debug_setRandomPlayerPositions();
-  void debug_printAdjacentTable(size_t x, size_t y);
+  void debug_printAdjacentTable(uint8_t x, uint8_t y);
 };
