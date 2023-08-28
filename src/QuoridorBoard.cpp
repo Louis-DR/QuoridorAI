@@ -116,61 +116,58 @@ Array2D<Array2D<bool, 9>, 9> QuoridorBoard::get_adjacencyTables() {
 
   // Add players to adjacency tables
   // if players are adjacent
-  if (abs(player1_x - player2_x) + abs(player1_y - player2_y) == 1) {
-    uint8_t direction;
-    if (abs(player1_x - player2_x) == 1) {
-      direction = 0;
-    }
-    else if (abs(player1_y - player2_y) == 1) {
-      direction = 1;
-    }
+  int8_t adversary_x;// Virtual player position
+  int8_t adversary_y;
+  for (uint8_t player_id= 0; player_id<2; player_id++){ // Considering player 1 and 2 alternately
+        int8_t main_player_x = players[player_id].position_x;
+        int8_t main_player_y = players[player_id].position_y;
+    for (uint8_t direction=0; direction < 2; direction++){ // Considering East-West and North-South directions
     // Check there's no barrier between players (their adjacency is not blocked)
-    if (adjacencyTables[player1_x][player1_y][player2_x][player2_y]) {
-      // Remove adjacency between players'cells
-      adjacencyTables[player1_x][player1_y][player2_x][player2_y] = false;
-      adjacencyTables[player2_x][player2_y][player1_x][player1_y] = false;
-      for (uint8_t player_id = 0; player_id < 2; player_id++) {
-        uint8_t adversary_id = (player_id + 1) % 2;
-        uint8_t main_player_x = players[player_id].position_x;
-        uint8_t main_player_y = players[player_id].position_y;
-        uint8_t adversary_x = players[adversary_id].position_x;
-        uint8_t adversary_y = players[adversary_id].position_y;
-
+        for (int8_t orientation=-1; orientation<2; orientation++){ // Considering orientation ex: North-South and South-North
+        
         // Check if behind cell exists and is not blocked
         if (direction == 0) { // East-West direction
-          int8_t delta = adversary_x - main_player_x;// Travel direction
-          if (delta + adversary_x >= 0 && delta + adversary_x <= 8 && adjacencyTables[adversary_x][adversary_y][delta + adversary_x][adversary_y]) {// Check if out-of-bounds
-            adjacencyTables[main_player_x][main_player_y][adversary_x][adversary_y] = false;
-            adjacencyTables[adversary_x][adversary_y][main_player_x][main_player_y] = false; // redundant in practice
-            adjacencyTables[main_player_x][main_player_y][adversary_x + delta][adversary_y] = true;
-            adjacencyTables[adversary_x + delta][adversary_y][main_player_x][main_player_y] = true;
-          }
-          else {
-            for (int8_t i = -1; i < 2; i += 2) {
-              if (adversary_y + i >= 0 && adversary_y + i <= 8 && adjacencyTables[adversary_x][adversary_y][adversary_x][adversary_y + i]) {
+          adversary_x = main_player_x + orientation;// Orientation
+          adversary_y = main_player_y;
+            if(adversary_x >= 0 && adversary_x <= 8){// Check if out-of-bounds
+              int8_t delta = main_player_x - adversary_x;// Travel direction
+              if (adjacencyTables[main_player_x][main_player_y][adversary_x][adversary_y]) {// Check if presence of barrier
                 adjacencyTables[main_player_x][main_player_y][adversary_x][adversary_y] = false;
-                adjacencyTables[adversary_x][adversary_y][main_player_x][main_player_y] = false; // redundant in practice
-                adjacencyTables[main_player_x][main_player_y][adversary_x][adversary_y + i] = true;
-                adjacencyTables[adversary_x][adversary_y + i][main_player_x][main_player_y] = true;
+                adjacencyTables[adversary_x][adversary_y][main_player_x][main_player_y] = false;
+                adjacencyTables[adversary_x][adversary_y][main_player_x + delta][main_player_y] = true;
+                adjacencyTables[main_player_x + delta][main_player_y][adversary_x][adversary_y] = true;
               }
-            }
+              else { // If presence of barrier
+                for (int8_t i = -1; i < 2; i += 2) { // Check lateral cells access
+                  if (main_player_y + i >= 0 && main_player_y + i <= 8 && adjacencyTables[main_player_x][main_player_y][main_player_x][main_player_y + i]) {
+                    adjacencyTables[main_player_x][main_player_y][adversary_x][adversary_y] = false;
+                    adjacencyTables[adversary_x][adversary_y][main_player_x][main_player_y] = false;
+                    adjacencyTables[adversary_x][adversary_y][main_player_x][main_player_y + i] = true;
+                    adjacencyTables[main_player_x][main_player_y + i][adversary_x][adversary_y] = true;
+                  }
+                }
+              }
           }
         }
-        else if (direction == 1) {
-          int8_t delta = adversary_y - main_player_y;// Travel direction
-          if (delta + adversary_y >= 0 && delta + adversary_y <= 8 && adjacencyTables[adversary_x][adversary_y][adversary_x][delta + adversary_y]) {// Check if out-of-bounds
-            adjacencyTables[main_player_x][main_player_y][adversary_x][adversary_y] = false;
-            adjacencyTables[adversary_x][adversary_y][main_player_x][main_player_y] = false; // redundant in practice
-            adjacencyTables[main_player_x][main_player_y][adversary_x][adversary_y + delta] = true;
-            adjacencyTables[adversary_x][adversary_y + delta][main_player_x][main_player_y] = true;
-          }
-          else {
-            for (int8_t i = -1; i < 2; i += 2) {
-              if (adversary_x + i >= 0 && adversary_x + i <= 8 && adjacencyTables[adversary_x][adversary_y][adversary_x + i][adversary_y]) {
-                adjacencyTables[main_player_x][main_player_y][adversary_x][adversary_y] = false;
-                adjacencyTables[adversary_x][adversary_y][main_player_x][main_player_y] = false; // redundant in practice
-                adjacencyTables[main_player_x][main_player_y][adversary_x + i][adversary_y] = true;
-                adjacencyTables[adversary_x + i][adversary_y][main_player_x][main_player_y] = true;
+        else if (direction == 1) { // Considering North-South direction
+          adversary_x = main_player_x;
+          adversary_y = main_player_y + orientation;
+          int8_t delta = main_player_y - adversary_y;// Travel direction
+            if (adversary_y >= 0 && adversary_y <= 8 ){ // Check if out-of-bound
+            if (main_player_y + delta >= 0 && delta + main_player_y <= 8 && adjacencyTables[main_player_x][main_player_y][main_player_x][delta + main_player_y]) {// Check if presence of barrier
+              adjacencyTables[main_player_x][main_player_y][adversary_x][adversary_y] = false;
+              adjacencyTables[adversary_x][adversary_y][main_player_x][main_player_y] = false;
+              adjacencyTables[adversary_x][adversary_y][main_player_x][main_player_y + delta] = true;
+              adjacencyTables[main_player_x][main_player_y + delta][adversary_x][adversary_y] = true;
+            }
+            else {
+              for (int8_t i = -1; i < 2; i += 2) { // Check lateral cells access
+                if (main_player_x + i >= 0 && main_player_x + i <= 8 && adjacencyTables[main_player_x][main_player_y][main_player_x + i][main_player_y]) {
+                  adjacencyTables[main_player_x][main_player_y][adversary_x][adversary_y] = false;
+                  adjacencyTables[adversary_x][adversary_y][main_player_x][main_player_y] = false;
+                  adjacencyTables[main_player_x + i][main_player_y][adversary_x][adversary_y] = true;
+                  adjacencyTables[adversary_x][adversary_y][main_player_x + i][main_player_y] = true;
+                }
               }
             }
           }
