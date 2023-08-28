@@ -138,7 +138,7 @@ Array2D<Array2D<bool, 9>, 9> QuoridorBoard::get_adjacencyTables() {
 
         // Check if behind cell exists and is not blocked
         if (direction == 0) { // East-West direction
-          int8_t delta = adversary_x - main_player_x;// Travel direction 
+          int8_t delta = adversary_x - main_player_x;// Travel direction
           if (delta + adversary_x >= 0 && delta + adversary_x <= 8 && adjacencyTables[adversary_x][adversary_y][delta + adversary_x][adversary_y]) {// Check if out-of-bounds
             adjacencyTables[main_player_x][main_player_y][adversary_x][adversary_y] = false;
             adjacencyTables[adversary_x][adversary_y][main_player_x][main_player_y] = false; // redundant in practice
@@ -180,6 +180,34 @@ Array2D<Array2D<bool, 9>, 9> QuoridorBoard::get_adjacencyTables() {
   }
 
   return adjacencyTables;
+}
+
+BarrierGrid QuoridorBoard::get_legalBarrierPlacements() {
+  // Init grid of legal barrier placement to all legal
+  BarrierGrid legalBarrierPlacemenent;
+  for (size_t x = 0; x < 8; ++x) {
+    legalBarrierPlacemenent.horizontal[x].fill(true);
+    legalBarrierPlacemenent.vertical[x].fill(true);
+  }
+
+  // Iterate over all existing barriers
+  for (int x = 0; x < 8; x++) {
+    for (int y = 0; y < 8; y++) {
+      if (barriers.horizontal[x][y]) {
+        legalBarrierPlacemenent.horizontal[x][y] = false;
+        legalBarrierPlacemenent.vertical[x][y] = false;
+        if (x > 0) legalBarrierPlacemenent.horizontal[x+1][y] = false;
+        if (x < 8) legalBarrierPlacemenent.horizontal[x-1][y] = false;
+      } else if (barriers.vertical[x][y]) {
+        legalBarrierPlacemenent.horizontal[x][y] = false;
+        legalBarrierPlacemenent.vertical[x][y] = false;
+        if (y > 0) legalBarrierPlacemenent.vertical[x][y+1] = false;
+        if (y < 8) legalBarrierPlacemenent.vertical[x][y-1] = false;
+      }
+    }
+  }
+
+  return legalBarrierPlacemenent;
 }
 
 void QuoridorBoard::startInteractiveMode() {
@@ -407,8 +435,7 @@ void QuoridorBoard::debug_checkInvalidStates() {
           std::cout << "ERROR: Invalid board state, both vertical and horizontal barriers at position " << x << "-" << y << endl;
         if (x != 7 && barriers.horizontal[x + 1][y])
           std::cout << "ERROR: Invalid board state, overlapping horizontal barriers at positions " << x << "-" << y << " and " << x + 1 << "-" << y << endl;
-      }
-      else if (barriers.vertical[x][y]) {
+      } else if (barriers.vertical[x][y]) {
         if (y != 7 && barriers.vertical[x][y + 1])
           std::cout << "ERROR: Invalid board state, overlapping vertical barriers at positions " << x << "-" << y << " and " << x << "-" << y + 1 << endl;
       }

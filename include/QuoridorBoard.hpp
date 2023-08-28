@@ -13,8 +13,8 @@ template <class T, size_t N>
 using Array2D = array<array<T, N>, N>;
 
 struct BarrierGrid {
-  Array2D<bool, 8> vertical;
   Array2D<bool, 8> horizontal;
+  Array2D<bool, 8> vertical;
 };
 
 struct Player
@@ -40,6 +40,7 @@ public:
 
   void print(bool adjacent_table_enable = false, size_t adjacent_table_x = 0, size_t adjacent_table_y = 0);
   Array2D<Array2D<bool, 9>, 9> get_adjacencyTables();
+  BarrierGrid get_legalBarrierPlacements();
 
   void startInteractiveMode();
 
