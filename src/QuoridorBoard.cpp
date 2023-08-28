@@ -20,7 +20,7 @@ QuoridorBoard::~QuoridorBoard() {}
 
 void QuoridorBoard::print(bool adjacency_table_enable, size_t adjacency_table_x, size_t adjacency_table_y) {
   // If enabling drawing of adjacency table, then compute it
-  Array2D<bool, 9> adjacency_table;
+  Array2D<bool,9> adjacency_table;
   if (adjacency_table_enable)
     adjacency_table = get_adjacencyTables()[adjacency_table_x][adjacency_table_y];
 
@@ -75,8 +75,8 @@ void QuoridorBoard::print(bool adjacency_table_enable, size_t adjacency_table_x,
   std::cout << "    0   1   2   3   4   5   6   7   8  " << endl;
 }
 
-Array2D<Array2D<bool, 9>, 9> QuoridorBoard::get_adjacencyTables() {
-  Array2D<Array2D<bool, 9>, 9> adjacencyTables;
+Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTables() {
+  Array2D<Array2D<bool,9>,9> adjacencyTables;
 
   // Generate table without any obstacle
   for (int x = 0; x < 9; x++) {
@@ -124,7 +124,7 @@ Array2D<Array2D<bool, 9>, 9> QuoridorBoard::get_adjacencyTables() {
     for (uint8_t direction=0; direction < 2; direction++){ // Considering East-West and North-South directions
     // Check there's no barrier between players (their adjacency is not blocked)
         for (int8_t orientation=-1; orientation<2; orientation++){ // Considering orientation ex: North-South and South-North
-        
+
         // Check if behind cell exists and is not blocked
         if (direction == 0) { // East-West direction
           adversary_x = main_player_x + orientation;// Orientation
