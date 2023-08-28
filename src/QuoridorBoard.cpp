@@ -38,6 +38,8 @@ void QuoridorBoard::print(bool adjacency_table_enable, size_t adjacency_table_x,
         std::cout << " ○ ";
       else if (x == players[1].position_x && y == players[1].position_y)
         std::cout << " ● ";
+      else if (adjacency_table_enable && adjacency_table[x][y])
+        std::cout << " ⦾ ";
       else
         std::cout << "   ";
       // If not at the last column, draw the veritcal barrier
