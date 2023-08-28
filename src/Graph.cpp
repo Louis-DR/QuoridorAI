@@ -4,7 +4,7 @@ Graph::Graph(uint8_t vertexCount)
 {
     this->vertexCount = vertexCount;
     this->visited = std::vector<bool>(vertexCount, false);
-    this->distance = std::vector<uint8_t>(vertexCount, 255);
+    this->distance = std::vector<int8_t>(vertexCount, 127);
     this->parent = std::vector<uint8_t>(vertexCount, -1);
     this->final_line_size = static_cast<uint8_t>(sqrt(vertexCount));
     this->adjMatrix = std::vector<std::vector<bool>>(vertexCount, std::vector<bool>(vertexCount, false));
@@ -65,7 +65,7 @@ bool Graph::isNodeOnFinishLine(uint8_t node, bool is_first_player)
     }
 }
 
-uint8_t Graph::getMinDistance(uint8_t startNode, bool is_first_player)
+int8_t Graph::getMinDistance(uint8_t startNode, bool is_first_player)
 {
 
     this->distance[startNode] = 0;
@@ -97,5 +97,10 @@ uint8_t Graph::getMinDistance(uint8_t startNode, bool is_first_player)
             frontier = newFrontier;
             newFrontier = set<uint8_t>();
         }
+        if (newFrontier.empty())
+        {
+            break;
+        }
     }
+    return 127;
 }
