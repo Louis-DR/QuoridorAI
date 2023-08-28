@@ -83,16 +83,16 @@ Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTables() {
   for (int x = 0; x < 8; x++) {
     for (int y = 0; y < 8; y++) {
       if (barriers.horizontal[x][y]) {
-        adjacencyTables[x  ][y  ][x  ][y+1] = true;
-        adjacencyTables[x  ][y+1][x  ][y  ] = true;
-        adjacencyTables[x+1][y  ][x+1][y+1] = true;
-        adjacencyTables[x+1][y+1][x+1][y  ] = true;
+        adjacencyTables[x  ][y  ][x  ][y+1] = false;
+        adjacencyTables[x  ][y+1][x  ][y  ] = false;
+        adjacencyTables[x+1][y  ][x+1][y+1] = false;
+        adjacencyTables[x+1][y+1][x+1][y  ] = false;
       }
       if (barriers.vertical[x][y]) {
-        adjacencyTables[x  ][y  ][x+1][y  ] = true;
-        adjacencyTables[x+1][y  ][x  ][y  ] = true;
-        adjacencyTables[x  ][y+1][x+1][y+1] = true;
-        adjacencyTables[x+1][y+1][x  ][y+1] = true;
+        adjacencyTables[x  ][y  ][x+1][y  ] = false;
+        adjacencyTables[x+1][y  ][x  ][y  ] = false;
+        adjacencyTables[x  ][y+1][x+1][y+1] = false;
+        adjacencyTables[x+1][y+1][x  ][y+1] = false;
       }
     }
   }
@@ -238,6 +238,14 @@ void QuoridorBoard::startInteractiveMode() {
       } else {
         std::cout << "ERROR: Unknown sub-command '" << cmd_subop << "' for command 'player'." << endl;
       }
+    } else if (cmd_op == "adjacent") {
+      if (cmd_len < 3) {
+        std::cout << "ERROR: Not enough arguments for command 'adjacent'." << endl;
+        continue;
+      }
+      auto cmd_x = stoi(cmd_split[1]);
+      auto cmd_y = stoi(cmd_split[2]);
+      debug_printAdjacentTable(cmd_x, cmd_y);
     } else {
       std::cout << "ERROR: Unknown command '" << cmd_op << "'." << endl;
     }
@@ -341,4 +349,8 @@ void QuoridorBoard::debug_setRandomPlayerPositions() {
   players[0].position_y = rand_0_8(randgen);
   players[1].position_x = rand_0_8(randgen);
   players[1].position_y = rand_0_8(randgen);
+}
+
+void QuoridorBoard::debug_printAdjacentTable(size_t x, size_t y) {
+  Array2D<Array2D<bool,9>,9> adjacencyTables = get_adjacencyTables();
 }

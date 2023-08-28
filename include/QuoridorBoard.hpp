@@ -35,7 +35,7 @@ public:
   BoardConfig config;
 
   void print();
-  Array2D<Array2D<bool, 9>, 9> get_adjacencyTables();
+  Array2D<Array2D<bool,9>,9> get_adjacencyTables();
 
   void startInteractiveMode();
 
@@ -46,4 +46,5 @@ public:
   void debug_setCornerVerticalBarriers();
   void debug_setRandomBarriers();
   void debug_setRandomPlayerPositions();
+  void debug_printAdjacentTable(size_t x, size_t y);
 };
