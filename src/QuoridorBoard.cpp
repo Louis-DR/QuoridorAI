@@ -216,32 +216,42 @@ BarrierGrid QuoridorBoard::get_legalBarrierPlacements() {
         // Sufficiently isolated means having no more than one neighbor barrier
         // Or a no neighbor barrier at all if also touching the edge of the grid
         uint8_t numberNeighbors = 0;
-        if (barriers.horizontal[x][y]) {
-          if (x > 1          && legalBarrierPlacemenent.horizontal[x-2][y  ]) numberNeighbors++;
-          if (x < 6          && legalBarrierPlacemenent.horizontal[x+2][y  ]) numberNeighbors++;
-          if (x > 0 && y > 0 && legalBarrierPlacemenent.vertical  [x-1][y-1]) numberNeighbors++;
-          if (x > 0          && legalBarrierPlacemenent.vertical  [x-1][y  ]) numberNeighbors++;
-          if (x > 0 && y < 7 && legalBarrierPlacemenent.vertical  [x-1][y+1]) numberNeighbors++;
-          if (         y > 0 && legalBarrierPlacemenent.vertical  [x  ][y-1]) numberNeighbors++;
-          if (         y < 7 && legalBarrierPlacemenent.vertical  [x  ][y+1]) numberNeighbors++;
-          if (x < 7 && y > 0 && legalBarrierPlacemenent.vertical  [x+1][y-1]) numberNeighbors++;
-          if (x < 7          && legalBarrierPlacemenent.vertical  [x+1][y  ]) numberNeighbors++;
-          if (x < 7 && y < 7 && legalBarrierPlacemenent.vertical  [x+1][y+1]) numberNeighbors++;
-        } else if (barriers.vertical[x][y]) {
-          if (         y > 1 && legalBarrierPlacemenent.vertical  [x  ][y-2]) numberNeighbors++;
-          if (         y < 6 && legalBarrierPlacemenent.vertical  [x  ][y+2]) numberNeighbors++;
-          if (x > 0 && y > 0 && legalBarrierPlacemenent.horizontal[x-1][y-1]) numberNeighbors++;
-          if (         y > 0 && legalBarrierPlacemenent.horizontal[x  ][y-1]) numberNeighbors++;
-          if (x < 7 && y > 0 && legalBarrierPlacemenent.horizontal[x+1][y-1]) numberNeighbors++;
-          if (x > 0          && legalBarrierPlacemenent.horizontal[x-1][y  ]) numberNeighbors++;
-          if (x < 7          && legalBarrierPlacemenent.horizontal[x+1][y  ]) numberNeighbors++;
-          if (x > 0 && y < 7 && legalBarrierPlacemenent.horizontal[x-1][y+1]) numberNeighbors++;
-          if (         y < 7 && legalBarrierPlacemenent.horizontal[x  ][y+1]) numberNeighbors++;
-          if (x < 7 && y < 7 && legalBarrierPlacemenent.horizontal[x+1][y+1]) numberNeighbors++;
+        if (legalBarrierPlacemenent.horizontal[x][y]) {
+          if (x > 1          && barriers.horizontal[x-2][y  ]) numberNeighbors++;
+          if (x < 6          && barriers.horizontal[x+2][y  ]) numberNeighbors++;
+          if (x > 0 && y > 0 && barriers.vertical  [x-1][y-1]) numberNeighbors++;
+          if (x > 0          && barriers.vertical  [x-1][y  ]) numberNeighbors++;
+          if (x > 0 && y < 7 && barriers.vertical  [x-1][y+1]) numberNeighbors++;
+          if (         y > 0 && barriers.vertical  [x  ][y-1]) numberNeighbors++;
+          if (         y < 7 && barriers.vertical  [x  ][y+1]) numberNeighbors++;
+          if (x < 7 && y > 0 && barriers.vertical  [x+1][y-1]) numberNeighbors++;
+          if (x < 7          && barriers.vertical  [x+1][y  ]) numberNeighbors++;
+          if (x < 7 && y < 7 && barriers.vertical  [x+1][y+1]) numberNeighbors++;
+        } else if (legalBarrierPlacemenent.vertical[x][y]) {
+          if (         y > 1 && barriers.vertical  [x  ][y-2]) numberNeighbors++;
+          if (         y < 6 && barriers.vertical  [x  ][y+2]) numberNeighbors++;
+          if (x > 0 && y > 0 && barriers.horizontal[x-1][y-1]) numberNeighbors++;
+          if (         y > 0 && barriers.horizontal[x  ][y-1]) numberNeighbors++;
+          if (x < 7 && y > 0 && barriers.horizontal[x+1][y-1]) numberNeighbors++;
+          if (x > 0          && barriers.horizontal[x-1][y  ]) numberNeighbors++;
+          if (x < 7          && barriers.horizontal[x+1][y  ]) numberNeighbors++;
+          if (x > 0 && y < 7 && barriers.horizontal[x-1][y+1]) numberNeighbors++;
+          if (         y < 7 && barriers.horizontal[x  ][y+1]) numberNeighbors++;
+          if (x < 7 && y < 7 && barriers.horizontal[x+1][y+1]) numberNeighbors++;
         }
         if ((numberNeighbors > 1) || ((x == 0 || x == 7 || y == 0 || y == 7) && numberNeighbors > 0)) {
           // ToDo : check if placing a barrier here blocks the game
           // If it does, then set the move as illegal
+          bool is_blocking;
+          barriers.horizontal[x][y] = true;
+          is_blocking = false; // ToDo replace
+          if (is_blocking) legalBarrierPlacemenent.horizontal[x][y] = false;
+          barriers.horizontal[x][y] = false;
+
+          barriers.vertical[x][y] = true;
+          is_blocking = false; // ToDo replace
+          if (is_blocking) legalBarrierPlacemenent.vertical[x][y] = false;
+          barriers.vertical[x][y] = false;
         }
       }
     }
