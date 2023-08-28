@@ -20,7 +20,7 @@ QuoridorBoard::~QuoridorBoard() {}
 
 void QuoridorBoard::print(bool adjacency_table_enable, size_t adjacency_table_x, size_t adjacency_table_y) {
   // If enabling drawing of adjacency table, then compute it
-  Array2D<bool,9> adjacency_table;
+  Array2D<bool, 9> adjacency_table;
   if (adjacency_table_enable)
     adjacency_table = get_adjacencyTables()[adjacency_table_x][adjacency_table_y];
 
@@ -30,18 +30,22 @@ void QuoridorBoard::print(bool adjacency_table_enable, size_t adjacency_table_x,
   // Iterate over rows from top to bottom
   for (int y = 8; y >= 0; --y) {
     // Left edge
-    std::cout << y <<" ┃";
+    std::cout << y << " ┃";
     // Iterate over columns from left to right
     for (int x = 0; x < 9; ++x) {
       // Draw player piece
-      if (x == players[0].position_x && y == players[0].position_y) std::cout << " ○ ";
-      else if (x == players[1].position_x && y == players[1].position_y) std::cout << " ● ";
-      else if (adjacency_table_enable && adjacency_table[x][y]) std::cout << " ⦾ ";
-      else std::cout << "   ";
+      if (x == players[0].position_x && y == players[0].position_y)
+        std::cout << " ○ ";
+      else if (x == players[1].position_x && y == players[1].position_y)
+        std::cout << " ● ";
+      else
+        std::cout << "   ";
       // If not at the last column, draw the veritcal barrier
       if (x != 8) {
-        if ((y != 0 && barriers.vertical[x][y-1]) || (y != 8 && barriers.vertical[x][y])) std::cout << "┃";
-        else std::cout << " ";
+        if ((y != 0 && barriers.vertical[x][y - 1]) || (y != 8 && barriers.vertical[x][y]))
+          std::cout << "┃";
+        else
+          std::cout << " ";
       }
     }
     // Right edge
@@ -54,13 +58,16 @@ void QuoridorBoard::print(bool adjacency_table_enable, size_t adjacency_table_x,
       // Iterate over columns from left to right
       for (int x = 0; x < 9; ++x) {
         // Draw the veritcal barrier
-        if ((x != 0 && barriers.horizontal[x-1][y-1]) || (x != 8 && barriers.horizontal[x][y-1])) std::cout << "╼━╾";
-        else std::cout << "╴ ╶";
+        if ((x != 0 && barriers.horizontal[x - 1][y - 1]) || (x != 8 && barriers.horizontal[x][y - 1]))
+          std::cout << "╼━╾";
+        else
+          std::cout << "╴ ╶";
         // Draw the cross point
-        if (x != 8) std::cout << "┼";
+        if (x != 8)
+          std::cout << "┼";
       }
       // Right edge
-      std::cout << "┨ " << y-1 << "\n";
+      std::cout << "┨ " << y - 1 << "\n";
     }
   }
   // Bottom row
@@ -68,8 +75,8 @@ void QuoridorBoard::print(bool adjacency_table_enable, size_t adjacency_table_x,
   std::cout << "    0   1   2   3   4   5   6   7   8  " << endl;
 }
 
-Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTables() {
-  Array2D<Array2D<bool,9>,9> adjacencyTables;
+Array2D<Array2D<bool, 9>, 9> QuoridorBoard::get_adjacencyTables() {
+  Array2D<Array2D<bool, 9>, 9> adjacencyTables;
 
   // Generate table without any obstacle
   for (int x = 0; x < 9; x++) {
@@ -102,6 +109,75 @@ Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTables() {
       }
     }
   }
+  uint8_t player1_x = players[0].position_x;
+  uint8_t player1_y = players[0].position_y;
+  uint8_t player2_x = players[1].position_x;
+  uint8_t player2_y = players[1].position_y;
+
+  // Add players to adjacency tables
+  // if players are adjacent
+  if (abs(player1_x - player2_x) + abs(player1_y - player2_y) == 1) {
+    uint8_t direction;
+    if (abs(player1_x - player2_x) == 1) {
+      direction = 0;
+    }
+    else if (abs(player1_y - player2_y) == 1) {
+      direction = 1;
+    }
+    // Check there's no barrier between players (their adjacency is not blocked)
+    if (adjacencyTables[player1_x][player1_y][player2_x][player2_y]) {
+      // Remove adjacency between players'cells
+      adjacencyTables[player1_x][player1_y][player2_x][player2_y] = false;
+      adjacencyTables[player2_x][player2_y][player1_x][player1_y] = false;
+      for (uint8_t player_id = 0; player_id < 2; player_id++) {
+        uint8_t adversary_id = (player_id + 1) % 2;
+        uint8_t main_player_x = players[player_id].position_x;
+        uint8_t main_player_y = players[player_id].position_y;
+        uint8_t adversary_x = players[adversary_id].position_x;
+        uint8_t adversary_y = players[adversary_id].position_y;
+
+        // Check if behind cell exists and is not blocked
+        if (direction == 0) { // East-West direction
+          int8_t delta = adversary_x - main_player_x;// Travel direction 
+          if (delta + adversary_x >= 0 && delta + adversary_x <= 8 && adjacencyTables[adversary_x][adversary_y][delta + adversary_x][adversary_y]) {// Check if out-of-bounds
+            adjacencyTables[main_player_x][main_player_y][adversary_x][adversary_y] = false;
+            adjacencyTables[adversary_x][adversary_y][main_player_x][main_player_y] = false; // redundant in practice
+            adjacencyTables[main_player_x][main_player_y][adversary_x + delta][adversary_y] = true;
+            adjacencyTables[adversary_x + delta][adversary_y][main_player_x][main_player_y] = true;
+          }
+          else {
+            for (int8_t i = -1; i < 2; i += 2) {
+              if (adversary_y + i >= 0 && adversary_y + i <= 8 && adjacencyTables[adversary_x][adversary_y][adversary_x][adversary_y + i]) {
+                adjacencyTables[main_player_x][main_player_y][adversary_x][adversary_y] = false;
+                adjacencyTables[adversary_x][adversary_y][main_player_x][main_player_y] = false; // redundant in practice
+                adjacencyTables[main_player_x][main_player_y][adversary_x][adversary_y + i] = true;
+                adjacencyTables[adversary_x][adversary_y + i][main_player_x][main_player_y] = true;
+              }
+            }
+          }
+        }
+        else if (direction == 1) {
+          int8_t delta = adversary_y - main_player_y;// Travel direction
+          if (delta + adversary_y >= 0 && delta + adversary_y <= 8 && adjacencyTables[adversary_x][adversary_y][adversary_x][delta + adversary_y]) {// Check if out-of-bounds
+            adjacencyTables[main_player_x][main_player_y][adversary_x][adversary_y] = false;
+            adjacencyTables[adversary_x][adversary_y][main_player_x][main_player_y] = false; // redundant in practice
+            adjacencyTables[main_player_x][main_player_y][adversary_x][adversary_y + delta] = true;
+            adjacencyTables[adversary_x][adversary_y + delta][main_player_x][main_player_y] = true;
+          }
+          else {
+            for (int8_t i = -1; i < 2; i += 2) {
+              if (adversary_x + i >= 0 && adversary_x + i <= 8 && adjacencyTables[adversary_x][adversary_y][adversary_x + i][adversary_y]) {
+                adjacencyTables[main_player_x][main_player_y][adversary_x][adversary_y] = false;
+                adjacencyTables[adversary_x][adversary_y][main_player_x][main_player_y] = false; // redundant in practice
+                adjacencyTables[main_player_x][main_player_y][adversary_x + i][adversary_y] = true;
+                adjacencyTables[adversary_x + i][adversary_y][main_player_x][main_player_y] = true;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 
   return adjacencyTables;
 }
@@ -122,7 +198,7 @@ void QuoridorBoard::startInteractiveMode() {
     getline(cin, cmd_str);
 
     // Split command by spaces
-    cmd_stream = stringstream{cmd_str};
+    cmd_stream = stringstream{ cmd_str };
     cmd_split.clear();
     while (getline(cmd_stream, cmd_split_el, ' '))
       cmd_split.push_back(cmd_split_el);
@@ -148,9 +224,11 @@ void QuoridorBoard::startInteractiveMode() {
       if (cmd_config_key == "auto_print") {
         if (cmd_config_val == "true" || cmd_config_val == "1") {
           config.interactive_auto_print = true;
-        } else if (cmd_config_val == "false" || cmd_config_val == "0") {
+        }
+        else if (cmd_config_val == "false" || cmd_config_val == "0") {
           config.interactive_auto_print = false;
-        } else {
+        }
+        else {
           std::cout << "ERROR: Invalid value '" << cmd_config_val << "' for configuration option '" << cmd_config_key << "'." << std::endl;
         }
       }
@@ -275,10 +353,12 @@ void QuoridorBoard::startInteractiveMode() {
         if (cmd_player_select == "white" || cmd_player_select == "w" || cmd_player_select == "0") {
           players[0].position_x = cmd_x;
           players[0].position_y = cmd_y;
-        } else if (cmd_player_select == "black" || cmd_player_select == "b" || cmd_player_select == "1") {
+        }
+        else if (cmd_player_select == "black" || cmd_player_select == "b" || cmd_player_select == "1") {
           players[1].position_x = cmd_x;
           players[1].position_y = cmd_y;
-        } else {
+        }
+        else {
           std::cout << "ERROR: Invalid player selector '" << cmd_player_select << "' for command 'player move'." << endl;
         }
       // Reset player positions
@@ -325,12 +405,12 @@ void QuoridorBoard::debug_checkInvalidStates() {
       if (barriers.horizontal[x][y]) {
         if (barriers.vertical[x][y])
           std::cout << "ERROR: Invalid board state, both vertical and horizontal barriers at position " << x << "-" << y << endl;
-        if (x != 7 && barriers.horizontal[x+1][y])
-          std::cout << "ERROR: Invalid board state, overlapping horizontal barriers at positions " << x << "-" << y << " and " << x+1 << "-" << y << endl;
+        if (x != 7 && barriers.horizontal[x + 1][y])
+          std::cout << "ERROR: Invalid board state, overlapping horizontal barriers at positions " << x << "-" << y << " and " << x + 1 << "-" << y << endl;
       }
       else if (barriers.vertical[x][y]) {
-        if (y != 7 && barriers.vertical[x][y+1])
-          std::cout << "ERROR: Invalid board state, overlapping vertical barriers at positions " << x << "-" << y << " and " << x << "-" << y+1 << endl;
+        if (y != 7 && barriers.vertical[x][y + 1])
+          std::cout << "ERROR: Invalid board state, overlapping vertical barriers at positions " << x << "-" << y << " and " << x << "-" << y + 1 << endl;
       }
     }
   }
@@ -382,10 +462,10 @@ void QuoridorBoard::debug_setRandomBarriers() {
   std::cout << "DEBUG: Placing barriers at random locations." << endl;
 
   random_device randseed;
-  mt19937 randgen{randseed()};
-  uniform_int_distribution<> rand_0_20(0,20);
-  uniform_int_distribution<> rand_0_7(0,7);
-  uniform_int_distribution<> rand_0_1(0,1);
+  mt19937 randgen{ randseed() };
+  uniform_int_distribution<> rand_0_20(0, 20);
+  uniform_int_distribution<> rand_0_7(0, 7);
+  uniform_int_distribution<> rand_0_1(0, 1);
 
   uint8_t number_barriers = rand_0_20(randgen);
 
@@ -394,8 +474,10 @@ void QuoridorBoard::debug_setRandomBarriers() {
     bool orientation = rand_0_1(randgen);
     size_t x = rand_0_7(randgen);
     size_t y = rand_0_7(randgen);
-    if (orientation) barriers.horizontal[x][y] = true;
-    else barriers.vertical[x][y] = true;
+    if (orientation)
+      barriers.horizontal[x][y] = true;
+    else
+      barriers.vertical[x][y] = true;
   }
 }
 
@@ -403,8 +485,8 @@ void QuoridorBoard::debug_setRandomPlayerPositions() {
   std::cout << "DEBUG: Placing the players at random positions." << endl;
 
   random_device randseed;
-  mt19937 randgen{randseed()};
-  uniform_int_distribution<> rand_0_8(0,8);
+  mt19937 randgen{ randseed() };
+  uniform_int_distribution<> rand_0_8(0, 8);
 
   // Place players at random positions without checking for supperposition
   players[0].position_x = rand_0_8(randgen);

@@ -9,24 +9,28 @@
 
 using namespace std;
 
-template <class T, size_t N> using Array2D = array<array<T, N>, N>;
+template <class T, size_t N>
+using Array2D = array<array<T, N>, N>;
 
 struct BarrierGrid {
   Array2D<bool, 8> vertical;
   Array2D<bool, 8> horizontal;
 };
 
-struct Player {
+struct Player
+{
   uint8_t position_x;
   uint8_t position_y;
   uint8_t barriers_left;
 };
 
-struct BoardConfig {
+struct BoardConfig
+{
   bool interactive_auto_print = false;
 };
 
-class QuoridorBoard {
+class QuoridorBoard
+{
 public:
   QuoridorBoard();
   ~QuoridorBoard();
