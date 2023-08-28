@@ -36,6 +36,7 @@ public:
 
   void debug_checkInvalidStates();
   void debug_clearBarriers();
+  void debug_resetPlayers();
   void debug_setCornerHorizontalBarriers();
   void debug_setCornerVerticalBarriers();
   void debug_setRandomBarriers();

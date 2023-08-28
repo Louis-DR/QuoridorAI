@@ -105,10 +105,12 @@ void QuoridorBoard::startInteractiveMode() {
   stringstream cmd_stream;
   vector<string> cmd_split;
   string cmd_split_el;
+  string cmd_op;
+  size_t cmd_len;
 
   while (true) {
     // Get user command
-    cin >> cmd_str;
+    getline(cin, cmd_str);
 
     // Split command by spaces
     cmd_stream = stringstream{cmd_str};
@@ -117,17 +119,81 @@ void QuoridorBoard::startInteractiveMode() {
       cmd_split.push_back(cmd_split_el);
 
     // Decoding command, could be optimized with constexpr hashing and switch
-    string cmd_op = cmd_split[0];
-    size_t cmd_len = cmd_split.size();
+    cmd_op = cmd_split[0];
+    cmd_len = cmd_split.size();
+    std::cout << "cmd_len = " << cmd_len << endl;
     if (cmd_op == "quit") {
       std::cout << "Quitting interactive mode." << endl;
       break;
-    // } else if (cmd_op == "") {
-    // } else if (cmd_op == "") {
-    // } else if (cmd_op == "") {
-    // } else if (cmd_op == "") {
+    } else if (cmd_op == "check") {
+      debug_checkInvalidStates();
+    } else if (cmd_op == "reset") {
+      debug_clearBarriers();
+      debug_resetPlayers();
+    } else if (cmd_op == "print") {
+      print();
+    } else if (cmd_op == "random") {
+      if (cmd_len > 1) {
+        string cmd_arg = cmd_split[1];
+        if (cmd_arg == "players") {
+          debug_setRandomPlayerPositions();
+        } else if (cmd_arg == "barriers") {
+          debug_setRandomBarriers();
+        } else if (cmd_arg == "all") {
+          debug_setRandomPlayerPositions();
+          debug_setRandomBarriers();
+        } else {
+          std::cout << "ERROR: Unknown argument '" << cmd_arg << "' for command 'random'." << endl;
+        }
+      } else {
+        debug_setRandomPlayerPositions();
+        debug_setRandomBarriers();
+      }
+    } else if (cmd_op == "barrier") {
+      if (cmd_len < 2) {
+        std::cout << "ERROR: Not enough arguments for command 'barrier'." << endl;
+        continue;
+      }
+      string cmd_subop = cmd_split[1];
+      if (cmd_subop == "add") {
+        if (cmd_len < 5) {
+          std::cout << "ERROR: Not enough arguments for command 'barrier add'." << endl;
+          continue;
+        }
+        string cmd_direction = cmd_split[2];
+        auto cmd_x = stoi(cmd_split[3]);
+        auto cmd_y = stoi(cmd_split[4]);
+        if (cmd_direction == "horizontal" || cmd_direction == "h") {
+          barriers.horizontal[cmd_x][cmd_y] = true;
+        } else if (cmd_direction == "vertical" || cmd_direction == "v") {
+          barriers.vertical[cmd_x][cmd_y] = true;
+        } else {
+          std::cout << "ERROR: Invalid direction '" << cmd_direction << "' for command 'barrier add'." << endl;
+        }
+      } else if (cmd_subop == "remove") {
+        if (cmd_len < 5) {
+          std::cout << "ERROR: Not enough arguments for command 'barrier remove'." << endl;
+          continue;
+        }
+        string cmd_direction = cmd_split[2];
+        auto cmd_x = stoi(cmd_split[3]);
+        auto cmd_y = stoi(cmd_split[4]);
+        if (cmd_direction == "horizontal" || cmd_direction == "h") {
+          barriers.horizontal[cmd_x][cmd_y] = false;
+        } else if (cmd_direction == "vertical" || cmd_direction == "v") {
+          barriers.vertical[cmd_x][cmd_y] = false;
+        } else {
+          std::cout << "ERROR: Invalid direction '" << cmd_direction << "' for command 'barrier remove'." << endl;
+        }
+      } else if (cmd_subop == "clear") {
+        debug_clearBarriers();
+      } else if (cmd_subop == "random") {
+        debug_setRandomBarriers();
+      } else {
+        std::cout << "ERROR: Unknown sub-command '" << cmd_subop << "' for command 'barrier'." << endl;
+      }
     } else {
-      std::cout << "ERROR: Unknown command " << cmd_op << "." << endl;
+      std::cout << "ERROR: Unknown command '" << cmd_op << "'." << endl;
     }
   }
   std::cout << "Interactive mode finished." << endl;
@@ -159,6 +225,18 @@ void QuoridorBoard::debug_clearBarriers() {
   std::cout << "DEBUG: Clearing the barriers." << endl;
   barriers.vertical.fill({});
   barriers.horizontal.fill({});
+}
+
+void QuoridorBoard::debug_resetPlayers() {
+  std::cout << "DEBUG: Resetting the players." << endl;
+
+  players[0].position_x = 4;
+  players[0].position_y = 0;
+  players[1].position_x = 4;
+  players[1].position_y = 8;
+
+  players[0].barriers_left = 10;
+  players[1].barriers_left = 10;
 }
 
 void QuoridorBoard::debug_setCornerHorizontalBarriers() {
