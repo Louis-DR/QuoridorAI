@@ -5,13 +5,13 @@
 
 using namespace std;
 
-class CorridorAgent
+class QuoridorAgent
 {
     bool is_player1;
 
 public:
-    CorridorAgent(bool is_player1);
-    ~CorridorAgent();
+    QuoridorAgent(bool is_player1);
+    ~QuoridorAgent();
     void nextMove(QuoridorBoard game);
     int8_t isGameFinished(QuoridorBoard game, bool is_first_player);
     int8_t minimax(QuoridorBoard game, uint8_t alpha, uint8_t beta, uint8_t depth, bool is_first_player, bool is_max_node);

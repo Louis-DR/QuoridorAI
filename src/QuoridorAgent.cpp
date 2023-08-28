@@ -1,19 +1,19 @@
-#include "CorridorAgent.hpp"
+#include "QuoridorAgent.hpp"
 
-CorridorAgent::CorridorAgent(bool is_player1)
+QuoridorAgent::QuoridorAgent(bool is_player1)
 {
     this->is_player1 = is_player1;
 }
 
-CorridorAgent::~CorridorAgent()
+QuoridorAgent::~QuoridorAgent()
 {
 }
 
-void CorridorAgent::nextMove(QuoridorBoard game)
+void QuoridorAgent::nextMove(QuoridorBoard game)
 {
 }
 
-int8_t CorridorAgent::isGameFinished(QuoridorBoard game, bool is_first_player)
+int8_t QuoridorAgent::isGameFinished(QuoridorBoard game, bool is_first_player)
 {
     if (game.players[0].position_y == 8)
         if (is_first_player)
@@ -37,7 +37,7 @@ int8_t CorridorAgent::isGameFinished(QuoridorBoard game, bool is_first_player)
         return 1;
 }
 
-int8_t CorridorAgent::minimax(QuoridorBoard game, uint8_t alpha, uint8_t beta, uint8_t depth, bool is_first_player, bool is_max_node)
+int8_t QuoridorAgent::minimax(QuoridorBoard game, uint8_t alpha, uint8_t beta, uint8_t depth, bool is_first_player, bool is_max_node)
 {
     int8_t gameFinished = this->isGameFinished(game = game, is_first_player = is_first_player);
     if (gameFinished == 127 || gameFinished == -127)
@@ -93,7 +93,7 @@ int8_t CorridorAgent::minimax(QuoridorBoard game, uint8_t alpha, uint8_t beta, u
     }
 }
 
-int8_t CorridorAgent::evaluationHeuristic(QuoridorBoard game, bool is_first_player)
+int8_t QuoridorAgent::evaluationHeuristic(QuoridorBoard game, bool is_first_player)
 {
     Graph graph = Graph(81);
     Player player1 = game.players[0];
