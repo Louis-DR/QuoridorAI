@@ -92,7 +92,7 @@ Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTables() {
     }
   }
 
-  // Compute barriers
+  // Compute blocking barrier
   for (int x = 0; x < 8; x++) {
     for (int y = 0; y < 8; y++) {
       if (barriers.horizontal[x][y]) {
@@ -109,6 +109,7 @@ Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTables() {
       }
     }
   }
+
   uint8_t player1_x = players[0].position_x;
   uint8_t player1_y = players[0].position_y;
   uint8_t player2_x = players[1].position_x;
