@@ -192,6 +192,36 @@ void QuoridorBoard::startInteractiveMode() {
       } else {
         std::cout << "ERROR: Unknown sub-command '" << cmd_subop << "' for command 'barrier'." << endl;
       }
+    } else if (cmd_op == "player") {
+      if (cmd_len < 2) {
+        std::cout << "ERROR: Not enough arguments for command 'player'." << endl;
+        continue;
+      }
+      string cmd_subop = cmd_split[1];
+      if (cmd_subop == "move") {
+        if (cmd_len < 5) {
+          std::cout << "ERROR: Not enough arguments for command 'barrier move'." << endl;
+          continue;
+        }
+        string cmd_player_select = cmd_split[2];
+        auto cmd_x = stoi(cmd_split[3]);
+        auto cmd_y = stoi(cmd_split[4]);
+        if (cmd_player_select == "white" || cmd_player_select == "w" || cmd_player_select == "0") {
+          players[0].position_x = cmd_x;
+          players[0].position_y = cmd_y;
+        } else if (cmd_player_select == "black" || cmd_player_select == "b" || cmd_player_select == "1") {
+          players[1].position_x = cmd_x;
+          players[1].position_y = cmd_y;
+        } else {
+          std::cout << "ERROR: Invalid player selector '" << cmd_player_select << "' for command 'player move'." << endl;
+        }
+      } else if (cmd_subop == "reset") {
+        debug_resetPlayers();
+      } else if (cmd_subop == "random") {
+        debug_setRandomPlayerPositions();
+      } else {
+        std::cout << "ERROR: Unknown sub-command '" << cmd_subop << "' for command 'player'." << endl;
+      }
     } else {
       std::cout << "ERROR: Unknown command '" << cmd_op << "'." << endl;
     }
