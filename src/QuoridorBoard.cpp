@@ -122,9 +122,25 @@ void QuoridorBoard::startInteractiveMode() {
     // Decoding command, could be optimized with constexpr hashing and switch
     cmd_op = cmd_split[0];
     cmd_len = cmd_split.size();
-    if (cmd_op == "quit") {
+    if (cmd_op == "quit" || cmd_op == "exit") {
       std::cout << "Quitting interactive mode." << endl;
       break;
+    } else if (cmd_op == "config") {
+      if (cmd_len < 3) {
+        std::cout << "ERROR: Not enough arguments for command 'config'." << endl;
+        continue;
+      }
+      string cmd_config_key = cmd_split[1];
+      string cmd_config_val = cmd_split[2];
+      if (cmd_config_key == "auto_print") {
+        if (cmd_config_val == "true" || cmd_config_val == "1") {
+          config.interactive_auto_print = true;
+        } else if (cmd_config_val == "false" || cmd_config_val == "0") {
+          config.interactive_auto_print = false;
+        } else {
+          std::cout << "ERROR: Invalid value '" << cmd_config_val << "' for configuration option '" << cmd_config_key << "'." << std::endl;
+        }
+      }
     } else if (cmd_op == "check") {
       debug_checkInvalidStates();
     } else if (cmd_op == "reset") {
@@ -225,6 +241,7 @@ void QuoridorBoard::startInteractiveMode() {
     } else {
       std::cout << "ERROR: Unknown command '" << cmd_op << "'." << endl;
     }
+    if (config.interactive_auto_print) print();
   }
   std::cout << "Interactive mode finished." << endl;
 }

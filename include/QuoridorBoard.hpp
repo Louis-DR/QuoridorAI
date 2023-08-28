@@ -22,12 +22,17 @@ struct Player {
   uint8_t barriers_left;
 };
 
+struct BoardConfig {
+  bool interactive_auto_print = false;
+};
+
 class QuoridorBoard {
 public:
   QuoridorBoard();
   ~QuoridorBoard();
   BarrierGrid barriers;
   array<Player,2> players;
+  BoardConfig config;
 
   void print();
   Array2D<Array2D<bool, 9>, 9> get_adjacencyTables();
