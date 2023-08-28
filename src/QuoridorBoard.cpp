@@ -190,65 +190,81 @@ void QuoridorBoard::startInteractiveMode() {
           debug_setRandomPlayerPositions();
           debug_setRandomBarriers();
         }
+        // Invalid argument
         else {
           std::cout << "ERROR: Unknown argument '" << cmd_arg << "' for command 'random'." << endl;
         }
       }
-      //
+      // Random players and barriers
       else {
         debug_setRandomPlayerPositions();
         debug_setRandomBarriers();
       }
+
+    // Modify barriers
     } else if (cmd_op == "barrier") {
+      // Must have a sub-command
       if (cmd_len < 2) {
         std::cout << "ERROR: Not enough arguments for command 'barrier'." << endl;
         continue;
       }
       string cmd_subop = cmd_split[1];
+      // Place a new barrier
       if (cmd_subop == "add") {
+        // Must provide orientation and coordinates of the barrier
         if (cmd_len < 5) {
           std::cout << "ERROR: Not enough arguments for command 'barrier add'." << endl;
           continue;
         }
-        string cmd_direction = cmd_split[2];
+        string cmd_orientation = cmd_split[2];
         auto cmd_x = stoi(cmd_split[3]);
         auto cmd_y = stoi(cmd_split[4]);
-        if (cmd_direction == "horizontal" || cmd_direction == "h") {
+        if (cmd_orientation == "horizontal" || cmd_orientation == "h") {
           barriers.horizontal[cmd_x][cmd_y] = true;
-        } else if (cmd_direction == "vertical" || cmd_direction == "v") {
+        } else if (cmd_orientation == "vertical" || cmd_orientation == "v") {
           barriers.vertical[cmd_x][cmd_y] = true;
         } else {
-          std::cout << "ERROR: Invalid direction '" << cmd_direction << "' for command 'barrier add'." << endl;
+          std::cout << "ERROR: Invalid orientation '" << cmd_orientation << "' for command 'barrier add'." << endl;
         }
+      // Remove an existing barrier
       } else if (cmd_subop == "remove") {
+        // Must provide orientation and coordinates of the barrier
         if (cmd_len < 5) {
           std::cout << "ERROR: Not enough arguments for command 'barrier remove'." << endl;
           continue;
         }
-        string cmd_direction = cmd_split[2];
+        string cmd_orientation = cmd_split[2];
         auto cmd_x = stoi(cmd_split[3]);
         auto cmd_y = stoi(cmd_split[4]);
-        if (cmd_direction == "horizontal" || cmd_direction == "h") {
+        if (cmd_orientation == "horizontal" || cmd_orientation == "h") {
           barriers.horizontal[cmd_x][cmd_y] = false;
-        } else if (cmd_direction == "vertical" || cmd_direction == "v") {
+        } else if (cmd_orientation == "vertical" || cmd_orientation == "v") {
           barriers.vertical[cmd_x][cmd_y] = false;
         } else {
-          std::cout << "ERROR: Invalid direction '" << cmd_direction << "' for command 'barrier remove'." << endl;
+          std::cout << "ERROR: Invalid orientation '" << cmd_orientation << "' for command 'barrier remove'." << endl;
         }
+      // Remove all barriers
       } else if (cmd_subop == "clear") {
         debug_clearBarriers();
+      // Set random barriers
       } else if (cmd_subop == "random") {
         debug_setRandomBarriers();
+      // Invalid sub-command
       } else {
         std::cout << "ERROR: Unknown sub-command '" << cmd_subop << "' for command 'barrier'." << endl;
       }
+
+    // Modify players
     } else if (cmd_op == "player") {
+      // Must provide sub-command
       if (cmd_len < 2) {
         std::cout << "ERROR: Not enough arguments for command 'player'." << endl;
         continue;
       }
       string cmd_subop = cmd_split[1];
+      // Move player
       if (cmd_subop == "move") {
+        // Must provide player selector and target coordinates
         if (cmd_len < 5) {
           std::cout << "ERROR: Not enough arguments for command 'barrier move'." << endl;
           continue;
@@ -265,14 +281,20 @@ void QuoridorBoard::startInteractiveMode() {
         } else {
           std::cout << "ERROR: Invalid player selector '" << cmd_player_select << "' for command 'player move'." << endl;
         }
+      // Reset player positions
       } else if (cmd_subop == "reset") {
         debug_resetPlayers();
+      // Move players to random positions
       } else if (cmd_subop == "random") {
         debug_setRandomPlayerPositions();
+      // Invalid sub-command
       } else {
         std::cout << "ERROR: Unknown sub-command '" << cmd_subop << "' for command 'player'." << endl;
       }
+
+    // Print the board with possible destinations from a source position
     } else if (cmd_op == "adjacent") {
+      // Must provide the source position
       if (cmd_len < 3) {
         std::cout << "ERROR: Not enough arguments for command 'adjacent'." << endl;
         continue;
@@ -280,9 +302,13 @@ void QuoridorBoard::startInteractiveMode() {
       auto cmd_x = stoi(cmd_split[1]);
       auto cmd_y = stoi(cmd_split[2]);
       print(true, cmd_x, cmd_y);
+
+    // Invalid command
     } else {
       std::cout << "ERROR: Unknown command '" << cmd_op << "'." << endl;
     }
+
+    // Print the board after each command
     if (config.interactive_auto_print) print();
   }
   std::cout << "Interactive mode finished." << endl;
@@ -363,6 +389,7 @@ void QuoridorBoard::debug_setRandomBarriers() {
 
   uint8_t number_barriers = rand_0_20(randgen);
 
+  // Place barriers at random positions without checking for any overlap
   for (int barrier = 0; barrier < number_barriers; ++barrier) {
     bool orientation = rand_0_1(randgen);
     size_t x = rand_0_7(randgen);
@@ -379,6 +406,7 @@ void QuoridorBoard::debug_setRandomPlayerPositions() {
   mt19937 randgen{randseed()};
   uniform_int_distribution<> rand_0_8(0,8);
 
+  // Place players at random positions without checking for supperposition
   players[0].position_x = rand_0_8(randgen);
   players[0].position_y = rand_0_8(randgen);
   players[1].position_x = rand_0_8(randgen);
