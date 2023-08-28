@@ -24,7 +24,7 @@ private:
 public:
     Graph(uint8_t vertexCount);
     ~Graph();
-    int8_t getMinDistance(uint8_t startNode, bool is_first_player);
+    int8_t getMinDistance(uint8_t startNode, bool is_first_player, std::set<uint8_t> stopping_nodes = set<uint8_t>());
     void addEdge(uint8_t i, uint8_t j);
     void removeEdge(uint8_t i, uint8_t j);
     std::vector<uint8_t> getNeighbors(uint8_t node);

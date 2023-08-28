@@ -65,7 +65,7 @@ bool Graph::isNodeOnFinishLine(uint8_t node, bool is_first_player)
     }
 }
 
-int8_t Graph::getMinDistance(uint8_t startNode, bool is_first_player)
+int8_t Graph::getMinDistance(uint8_t startNode, bool is_first_player, std::set<uint8_t> stopping_nodes)
 {
 
     this->distance[startNode] = 0;
@@ -85,7 +85,7 @@ int8_t Graph::getMinDistance(uint8_t startNode, bool is_first_player)
             for (size_t j = 0; j < temp.size(); j++)
             {
                 uint8_t neighbor = temp[j];
-                if (this->isNodeOnFinishLine(neighbor, is_first_player))
+                if (this->isNodeOnFinishLine(neighbor, is_first_player) || stopping_nodes.find(neighbor) != stopping_nodes.end())
                     return this->distance[node] + 1;
                 if (this->visited[neighbor])
                     continue;
