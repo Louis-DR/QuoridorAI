@@ -20,6 +20,7 @@ QuoridorBoard::~QuoridorBoard() {}
 
 void QuoridorBoard::print() {
   // Top row
+  std::cout << "      0   1   2   3   4   5   6   7    \n";
   std::cout << "  ┏━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┓\n";
   // Iterate over rows from top to bottom
   for (int y = 8; y >= 0; --y) {
@@ -53,7 +54,7 @@ void QuoridorBoard::print() {
         if (x != 8) std::cout << "┼";
       }
       // Right edge
-      std::cout << "┨\n";
+      std::cout << "┨ " << y-1 << "\n";
     }
   }
   // Bottom row
@@ -121,7 +122,6 @@ void QuoridorBoard::startInteractiveMode() {
     // Decoding command, could be optimized with constexpr hashing and switch
     cmd_op = cmd_split[0];
     cmd_len = cmd_split.size();
-    std::cout << "cmd_len = " << cmd_len << endl;
     if (cmd_op == "quit") {
       std::cout << "Quitting interactive mode." << endl;
       break;
