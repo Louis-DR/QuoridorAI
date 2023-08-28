@@ -46,7 +46,7 @@ int8_t QuoridorAgent::minimax(QuoridorBoard game, uint8_t alpha, uint8_t beta, u
     }
     else if (depth == 0)
     {
-        this->evaluationHeuristic(game = game, is_first_player = is_first_player);
+        return this->evaluationHeuristic(game = game, is_first_player = is_first_player);
     }
     else
     {
