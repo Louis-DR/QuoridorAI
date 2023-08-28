@@ -18,5 +18,7 @@ int  main() {
     board.debug_checkInvalidStates();
     board.print();
 
+    board.startInteractiveMode();
+
     return 0;
 }

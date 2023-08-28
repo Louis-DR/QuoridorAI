@@ -3,6 +3,8 @@
 #include <array>
 #include <cstdint>
 #include <iostream>
+#include <string>
+#include <sstream>
 #include <random>
 
 using namespace std;
@@ -29,6 +31,8 @@ public:
 
   void print();
   Array2D<Array2D<bool, 9>, 9> get_adjacencyTables();
+
+  void startInteractiveMode();
 
   void debug_checkInvalidStates();
   void debug_clearBarriers();

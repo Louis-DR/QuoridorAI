@@ -99,6 +99,40 @@ Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTables() {
   return adjacencyTables;
 }
 
+void QuoridorBoard::startInteractiveMode() {
+  cout << "Starting interactive mode." << endl;
+  string cmd_str;
+  stringstream cmd_stream;
+  vector<string> cmd_split;
+  string cmd_split_el;
+
+  while (true) {
+    // Get user command
+    cin >> cmd_str;
+
+    // Split command by spaces
+    cmd_stream = stringstream{cmd_str};
+    cmd_split.clear();
+    while (getline(cmd_stream, cmd_split_el, ' '))
+      cmd_split.push_back(cmd_split_el);
+
+    // Decoding command, could be optimized with constexpr hashing and switch
+    string cmd_op = cmd_split[0];
+    size_t cmd_len = cmd_split.size();
+    if (cmd_op == "quit") {
+      cout << "Quitting interactive mode." << endl;
+      break;
+    // } else if (cmd_op == "") {
+    // } else if (cmd_op == "") {
+    // } else if (cmd_op == "") {
+    // } else if (cmd_op == "") {
+    } else {
+      cout << "ERROR: Unknown command " << cmd_op << "." << endl;
+    }
+  }
+  cout << "Interactive mode finished." << endl;
+}
+
 void QuoridorBoard::debug_checkInvalidStates() {
   cout << "DEBUG: Checking for invalid board states." << endl;
 
