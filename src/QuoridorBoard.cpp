@@ -19,10 +19,10 @@ QuoridorBoard::QuoridorBoard() {
 QuoridorBoard::~QuoridorBoard() {}
 
 void QuoridorBoard::print(bool adjacency_table_enable, size_t adjacency_table_x, size_t adjacency_table_y) {
+  // If enabling drawing of adjacency table, then compute it
   Array2D<bool,9> adjacency_table;
-  if (adjacency_table_enable) {
+  if (adjacency_table_enable)
     adjacency_table = get_adjacencyTables()[adjacency_table_x][adjacency_table_y];
-  }
 
   // Top row
   std::cout << "      0   1   2   3   4   5   6   7    \n";
@@ -108,6 +108,7 @@ Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTables() {
 
 void QuoridorBoard::startInteractiveMode() {
   std::cout << "Starting interactive mode." << endl;
+
   string cmd_str;
   stringstream cmd_stream;
   vector<string> cmd_split;
@@ -115,6 +116,7 @@ void QuoridorBoard::startInteractiveMode() {
   string cmd_op;
   size_t cmd_len;
 
+  // Endless loop to read commands
   while (true) {
     // Get user command
     getline(cin, cmd_str);
@@ -128,10 +130,15 @@ void QuoridorBoard::startInteractiveMode() {
     // Decoding command, could be optimized with constexpr hashing and switch
     cmd_op = cmd_split[0];
     cmd_len = cmd_split.size();
+
+    // Quit interactive mode
     if (cmd_op == "quit" || cmd_op == "exit") {
       std::cout << "Quitting interactive mode." << endl;
       break;
-    } else if (cmd_op == "config") {
+    }
+
+    // Change configuration of the board
+    else if (cmd_op == "config") {
       if (cmd_len < 3) {
         std::cout << "ERROR: Not enough arguments for command 'config'." << endl;
         continue;
@@ -147,27 +154,48 @@ void QuoridorBoard::startInteractiveMode() {
           std::cout << "ERROR: Invalid value '" << cmd_config_val << "' for configuration option '" << cmd_config_key << "'." << std::endl;
         }
       }
-    } else if (cmd_op == "check") {
+    }
+
+    // Check invalid states
+    else if (cmd_op == "check") {
       debug_checkInvalidStates();
-    } else if (cmd_op == "reset") {
+    }
+
+    // Reset the board
+    else if (cmd_op == "reset") {
       debug_clearBarriers();
       debug_resetPlayers();
-    } else if (cmd_op == "print") {
+    }
+
+    // Print the board
+    else if (cmd_op == "print") {
       print();
-    } else if (cmd_op == "random") {
+    }
+
+    // Set random state
+    else if (cmd_op == "random") {
+      // If provided extra arg
       if (cmd_len > 1) {
         string cmd_arg = cmd_split[1];
+        // Only random player positions
         if (cmd_arg == "players") {
           debug_setRandomPlayerPositions();
-        } else if (cmd_arg == "barriers") {
+        }
+        // Only random barriers
+        else if (cmd_arg == "barriers") {
           debug_setRandomBarriers();
-        } else if (cmd_arg == "all") {
+        }
+        // Random players and barriers
+        else if (cmd_arg == "all") {
           debug_setRandomPlayerPositions();
           debug_setRandomBarriers();
-        } else {
+        }
+        else {
           std::cout << "ERROR: Unknown argument '" << cmd_arg << "' for command 'random'." << endl;
         }
-      } else {
+      }
+      //
+      else {
         debug_setRandomPlayerPositions();
         debug_setRandomBarriers();
       }
