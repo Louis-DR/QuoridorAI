@@ -191,18 +191,61 @@ BarrierGrid QuoridorBoard::get_legalBarrierPlacements() {
   }
 
   // Iterate over all existing barriers
+  uint8_t numberBarriers = 0;
   for (int x = 0; x < 8; x++) {
     for (int y = 0; y < 8; y++) {
       if (barriers.horizontal[x][y]) {
+        numberBarriers++;
         legalBarrierPlacemenent.horizontal[x][y] = false;
         legalBarrierPlacemenent.vertical[x][y] = false;
-        if (x > 0) legalBarrierPlacemenent.horizontal[x+1][y] = false;
-        if (x < 8) legalBarrierPlacemenent.horizontal[x-1][y] = false;
+        if (x > 0) legalBarrierPlacemenent.horizontal[x-1][y] = false;
+        if (x < 7) legalBarrierPlacemenent.horizontal[x+1][y] = false;
       } else if (barriers.vertical[x][y]) {
+        numberBarriers++;
         legalBarrierPlacemenent.horizontal[x][y] = false;
         legalBarrierPlacemenent.vertical[x][y] = false;
-        if (y > 0) legalBarrierPlacemenent.vertical[x][y+1] = false;
-        if (y < 8) legalBarrierPlacemenent.vertical[x][y-1] = false;
+        if (y > 0) legalBarrierPlacemenent.vertical[x][y-1] = false;
+        if (y < 7) legalBarrierPlacemenent.vertical[x][y+1] = false;
+      }
+    }
+  }
+
+  // If there are 4 or more barriers, then we have to check if no legal barrier could block the path
+  if (numberBarriers >= 4) {
+    // Iterate over all candidate legal barrier placements
+    for (int x = 0; x < 8; x++) {
+      for (int y = 0; y < 8; y++) {
+        // If the barrier is sufficiently isolated, then it is not blocking
+        // Sufficiently isolated means having no more than one neighbor barrier
+        // Or a no neighbor barrier at all if also touching the edge of the grid
+        uint8_t numberNeighbors = 0;
+        if (barriers.horizontal[x][y]) {
+          if (x > 1          && legalBarrierPlacemenent.horizontal[x-2][y  ]) numberNeighbors++;
+          if (x < 6          && legalBarrierPlacemenent.horizontal[x+2][y  ]) numberNeighbors++;
+          if (x > 0 && y > 0 && legalBarrierPlacemenent.vertical  [x-1][y-1]) numberNeighbors++;
+          if (x > 0          && legalBarrierPlacemenent.vertical  [x-1][y  ]) numberNeighbors++;
+          if (x > 0 && y < 7 && legalBarrierPlacemenent.vertical  [x-1][y+1]) numberNeighbors++;
+          if (         y > 0 && legalBarrierPlacemenent.vertical  [x  ][y-1]) numberNeighbors++;
+          if (         y < 7 && legalBarrierPlacemenent.vertical  [x  ][y+1]) numberNeighbors++;
+          if (x < 7 && y > 0 && legalBarrierPlacemenent.vertical  [x+1][y-1]) numberNeighbors++;
+          if (x < 7          && legalBarrierPlacemenent.vertical  [x+1][y  ]) numberNeighbors++;
+          if (x < 7 && y < 7 && legalBarrierPlacemenent.vertical  [x+1][y+1]) numberNeighbors++;
+        } else if (barriers.vertical[x][y]) {
+          if (         y > 1 && legalBarrierPlacemenent.vertical  [x  ][y-2]) numberNeighbors++;
+          if (         y < 6 && legalBarrierPlacemenent.vertical  [x  ][y+2]) numberNeighbors++;
+          if (x > 0 && y > 0 && legalBarrierPlacemenent.horizontal[x-1][y-1]) numberNeighbors++;
+          if (         y > 0 && legalBarrierPlacemenent.horizontal[x  ][y-1]) numberNeighbors++;
+          if (x < 7 && y > 0 && legalBarrierPlacemenent.horizontal[x+1][y-1]) numberNeighbors++;
+          if (x > 0          && legalBarrierPlacemenent.horizontal[x-1][y  ]) numberNeighbors++;
+          if (x < 7          && legalBarrierPlacemenent.horizontal[x+1][y  ]) numberNeighbors++;
+          if (x > 0 && y < 7 && legalBarrierPlacemenent.horizontal[x-1][y+1]) numberNeighbors++;
+          if (         y < 7 && legalBarrierPlacemenent.horizontal[x  ][y+1]) numberNeighbors++;
+          if (x < 7 && y < 7 && legalBarrierPlacemenent.horizontal[x+1][y+1]) numberNeighbors++;
+        }
+        if ((numberNeighbors > 1) || ((x == 0 || x == 7 || y == 0 || y == 7) && numberNeighbors > 0)) {
+          // ToDo : check if placing a barrier here blocks the game
+          // If it does, then set the move as illegal
+        }
       }
     }
   }
