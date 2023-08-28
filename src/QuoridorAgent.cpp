@@ -106,7 +106,7 @@ int8_t QuoridorAgent::evaluationHeuristic(QuoridorBoard game, bool is_first_play
     int8_t num_barriers_player1 = player1.barriers_left;
     int8_t num_barriers_player2 = player2.barriers_left;
 
-    value = min_distance_player2 - min_distance_player1 + 2 * (num_barriers_player1 - num_barriers_player2);
+    int8_t value = min_distance_player2 - min_distance_player1 + 2 * (num_barriers_player1 - num_barriers_player2);
 
     if (is_first_player)
     {
