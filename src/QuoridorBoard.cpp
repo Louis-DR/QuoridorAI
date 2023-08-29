@@ -668,12 +668,6 @@ void QuoridorBoard::debug_setRandomBarriers() {
   uint8_t rand_number_barrier_placed_by_black = number_barriers_real - rand_number_barrier_placed_by_white;
   players[0].barriers_left = 10 - rand_number_barrier_placed_by_white;
   players[1].barriers_left = 10 - rand_number_barrier_placed_by_black;
-
-  std::cout << "number_barriers_trial=" << +number_barriers_trial << std::endl;
-  std::cout << "number_barriers_real=" << +number_barriers_real << std::endl;
-  std::cout << "rand_number_barrier_placed_by_white=" << +rand_number_barrier_placed_by_white << std::endl;
-  std::cout << "rand_number_barrier_placed_by_black=" << +rand_number_barrier_placed_by_black << std::endl;
-
 }
 
 void QuoridorBoard::debug_setRandomPlayerPositions() {
