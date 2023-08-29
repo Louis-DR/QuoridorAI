@@ -52,12 +52,12 @@ template <> struct std::hash<QuoridorBoard> {
     uint8_t  player_1_position_x    = board.players[1].position_x;
     uint8_t  player_1_position_y    = board.players[1].position_y;
     uint8_t  player_1_barriers_left = board.players[1].barriers_left;
-    uint64_t players = (uint64_t(player_0_position_x   )       )
-                     + (uint64_t(player_0_position_y   ) <<  8 )
-                     + (uint64_t(player_0_barriers_left) << 16 )
-                     + (uint64_t(player_1_position_x   ) << 32 )
-                     + (uint64_t(player_1_position_y   ) << 40 )
-                     + (uint64_t(player_1_barriers_left) << 48 );
+    uint64_t players = ( uint64_t(player_0_position_x   )       )
+                     + ( uint64_t(player_0_position_y   ) <<  8 )
+                     + ( uint64_t(player_0_barriers_left) << 16 )
+                     + ( uint64_t(player_1_position_x   ) << 32 )
+                     + ( uint64_t(player_1_position_y   ) << 40 )
+                     + ( uint64_t(player_1_barriers_left) << 48 );
     return (  hash<uint64_t>()(barriers_horizontal)
             ^ hash<uint64_t>()(barriers_vertical)
             ^ hash<uint64_t>()(players) );
