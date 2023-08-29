@@ -29,8 +29,8 @@ void QuoridorBoard::print(PrintArgs args) {
   if (args.legal_barrier_enable)
     legalBarrierPlacemenent = get_legalBarrierPlacements();
 
-  // Top row
-  std::cout << "      0   1   2   3   4   5   6   7    \n";
+  // Top row with black player barriers to place
+  std::cout << "      0   1   2   3   4   5   6   7     ●:" << players[1].barriers_left << "\n";
   std::cout << "  ┏━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┓\n";
   // Iterate over rows from top to bottom
   for (int y = 8; y >= 0; --y) {
@@ -123,7 +123,7 @@ void QuoridorBoard::print(PrintArgs args) {
   }
   // Bottom row
   std::cout << "  ┗━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┛\n";
-  std::cout << "    0   1   2   3   4   5   6   7   8  " << endl;
+  std::cout << "    0   1   2   3   4   5   6   7   8   ○:" << players[0].barriers_left << endl;
 }
 
 Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTables() {
