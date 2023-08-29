@@ -17,12 +17,8 @@ using namespace std;
 class Graph
 {
 private:
-    uint8_t                    vertexCount;
-    Array2D<bool,9>            visited;
     Array2D<Array2D<bool,9>,9> adjacencyTables;
-    Array2D<uint8_t,9>         distance;
-    Array2D<uint8_t,9>         parent;
-    uint8_t                    final_line_size;
+    uint8_t final_line_size;
 
 public:
     Graph(Array2D<Array2D<bool,9>,9> adjacencyTables);

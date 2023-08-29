@@ -2,13 +2,6 @@
 
 Graph::Graph(Array2D<Array2D<bool,9>,9> adjacencyTables) {
     this->adjacencyTables = adjacencyTables;
-    // this->visited = std::vector<bool>(this->adjacencyTables, false);
-    // this->distance = std::vector<int8_t>(vertexCount, 127);
-    // this->parent = std::vector<uint8_t>(vertexCount, -1);
-    // this->final_line_size = static_cast<uint8_t>(sqrt(vertexCount));
-    this->visited = Array2D<bool,9>();
-    this->distance = Array2D<uint8_t,9>();
-    this->parent = Array2D<uint8_t,9>();
     this->final_line_size = 9;
 }
 
@@ -28,9 +21,10 @@ void Graph::removeEdge(uint8_t i, uint8_t j) {
 
 std::vector<std::pair<uint8_t, uint8_t>> Graph::getNeighbors(std::pair<uint8_t, uint8_t> node_coords) {
     std::vector<std::pair<uint8_t, uint8_t>>  neighbors;
-    for (size_t i = std::max(0,node_coords.first - 2); i < std::min(8,node_coords.first + 2); i++){
-        for (size_t j = std::max(0, node_coords.second -2); j < std::min(8, node_coords.second + 2); j++){
+    for (size_t i = std::max(0,node_coords.first - 2); i <= std::min(8,node_coords.first + 3); i++){
+        for (size_t j = std::max(0, node_coords.second -2); j <= std::min(8, node_coords.second + 3); j++){
             if (this->adjacencyTables[node_coords.first][node_coords.second][i][j]){
+                //std::cout << "Neighbor ("<< +i << ", "<< +j <<")" << endl;
                 neighbors.push_back(std::pair<uint8_t, uint8_t>(i,j));
             }
         }
@@ -42,19 +36,27 @@ uint8_t Graph::coords2NodeId(uint8_t x, uint8_t y) {
     return y * this->final_line_size + x;
 }
 
-std::pair<uint8_t, uint8_t> Graph::nodeId2Coords(uint8_t node) {
-    return std::pair<uint8_t, uint8_t>(node % this->final_line_size, node / this->final_line_size);
-}
-
-bool Graph::isNodeOnFinishLine(std::pair<uint8_t, uint8_t> node, bool is_first_player) {
-    if (is_first_player)
+bool Graph::isNodeOnFinishLine(std::pair<uint8_t, uint8_t> node, bool is_first_player)
+{   
+    //std::cout << "is_first_player "<< is_first_player << endl;
+    if (is_first_player) {
+        //std::cout << "node.second "<< +node.second << endl;
         return node.second == 8;
-    else
+    else {
         return node.second == 0;
+    }
 }
 
-uint8_t Graph::getMinDistance(std::pair<uint8_t, uint8_t> startNode, bool is_first_player, std::set<std::pair<uint8_t, uint8_t>> stopping_nodes) {
-    this->distance[startNode.first][startNode.second] = 0;
+uint8_t Graph::getMinDistance(std::pair<uint8_t, uint8_t> startNode, bool is_first_player, std::set<std::pair<uint8_t, uint8_t>> stopping_nodes)
+{   
+
+    Array2D<bool,9> visited = Array2D<bool,9>();
+    Array2D<uint8_t,9> distance = Array2D<uint8_t,9>();
+    Array2D<uint8_t,9> parent = Array2D<uint8_t,9>();
+    distance[startNode.first][startNode.second] = 0;
+    if (this->isNodeOnFinishLine(startNode, is_first_player)){ //|| stopping_nodes.find(startNode) != stopping_nodes.end())
+        return 0;
+    }
 
     uint8_t minDistanceNode, i;
     std::set<std::pair<uint8_t, uint8_t>> frontier = set<std::pair<uint8_t, uint8_t>>();
@@ -64,26 +66,32 @@ uint8_t Graph::getMinDistance(std::pair<uint8_t, uint8_t> startNode, bool is_fir
     {
         std::set<std::pair<uint8_t, uint8_t>> newFrontier = set<std::pair<uint8_t, uint8_t>>();
         for (itr = frontier.begin(); itr != frontier.end(); itr++)
-        {
+        {   
             std::pair<uint8_t, uint8_t> node = *itr;
             std::vector<std::pair<uint8_t, uint8_t>> temp = getNeighbors(node);
             for (size_t j = 0; j < temp.size(); j++)
             {
                 std::pair<uint8_t, uint8_t> neighbor = temp[j];
-                if (this->isNodeOnFinishLine(neighbor, is_first_player) || stopping_nodes.find(neighbor) != stopping_nodes.end())
-                    return this->distance[node.first][node.second] + 1;
-                if (this->visited[neighbor.first][neighbor.second])
+                bool isFinishNode = this->isNodeOnFinishLine(neighbor, is_first_player);
+                if (isFinishNode){// || stopping_nodes.find(neighbor) != stopping_nodes.end())
+                    uint8_t final_distance = distance[node.first][node.second] + 1;
+                    return final_distance;
+                }
+                if (visited[neighbor.first][neighbor.second]){
                     continue;
-                this->distance[neighbor.first][neighbor.second] = this->distance[node.first][node.second] + 1;
-                this->visited[neighbor.first][neighbor.second] = true;
+                }
+                distance[neighbor.first][neighbor.second] = distance[node.first][node.second] + 1;
+                visited[neighbor.first][neighbor.second] = true;
                 newFrontier.insert(neighbor);
-                this->parent[neighbor.first][neighbor.second] = this->coords2NodeId(node.first, node.second);
+                parent[neighbor.first][neighbor.second] = this->coords2NodeId(node.first, node.second);
             }
-            frontier = newFrontier;
-            newFrontier = set<std::pair<uint8_t, uint8_t>>();
+
         }
-        if (frontier.empty())
+        frontier = newFrontier;
+        newFrontier = set<std::pair<uint8_t, uint8_t>>();
+        if (frontier.empty()){
             break;
+        }
     }
     return 255;
 }
