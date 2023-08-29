@@ -511,15 +511,19 @@ BarrierGrid QuoridorBoard::get_legalBarrierPlacements() {
   }
 
   // If there are 4 or more barriers, then we have to check if no legal barrier could block the path
-  if (numberBarriers >= 4) {
+  // ToDo : fix, can block with 3 barriers on the edges and 2 barriers in the corners
+  if (numberBarriers >= 2) {
     // Iterate over all candidate legal barrier placements
     for (int x = 0; x < 8; x++) {
       for (int y = 0; y < 8; y++) {
         // If the barrier is sufficiently isolated, then it is not blocking
         // Sufficiently isolated means having no more than one neighbor barrier
         // Or a no neighbor barrier at all if also touching the edge of the grid
-        uint8_t numberNeighbors = 0;
+        bool is_blocking;
+        uint8_t numberNeighbors;
+        QuoridorAgent agent(true);
         if (legalBarrierPlacemenent.horizontal[x][y]) {
+          numberNeighbors = 0;
           if (x > 1          && barriers.horizontal[x-2][y  ]) numberNeighbors++;
           if (x < 6          && barriers.horizontal[x+2][y  ]) numberNeighbors++;
           if (x > 0 && y > 0 && barriers.vertical  [x-1][y-1]) numberNeighbors++;
@@ -530,7 +534,18 @@ BarrierGrid QuoridorBoard::get_legalBarrierPlacements() {
           if (x < 7 && y > 0 && barriers.vertical  [x+1][y-1]) numberNeighbors++;
           if (x < 7          && barriers.vertical  [x+1][y  ]) numberNeighbors++;
           if (x < 7 && y < 7 && barriers.vertical  [x+1][y+1]) numberNeighbors++;
-        } else if (legalBarrierPlacemenent.vertical[x][y]) {
+
+          if ((numberNeighbors > 1) || ((x == 0 || x == 7 || y == 0 || y == 7) && numberNeighbors > 0)) {
+            // If placing this barrier blocks the game, then set the move as illegal
+            barriers.horizontal[x][y] = true;
+            is_blocking  = agent.getMinDistancePlayer(*this, true ) == 255; // White blocked
+            is_blocking |= agent.getMinDistancePlayer(*this, false) == 255; // Black blocked
+            if (is_blocking) legalBarrierPlacemenent.horizontal[x][y] = false;
+            barriers.horizontal[x][y] = false;
+          }
+        }
+        if (legalBarrierPlacemenent.vertical[x][y]) {
+          numberNeighbors = 0;
           if (         y > 1 && barriers.vertical  [x  ][y-2]) numberNeighbors++;
           if (         y < 6 && barriers.vertical  [x  ][y+2]) numberNeighbors++;
           if (x > 0 && y > 0 && barriers.horizontal[x-1][y-1]) numberNeighbors++;
@@ -541,20 +556,15 @@ BarrierGrid QuoridorBoard::get_legalBarrierPlacements() {
           if (x > 0 && y < 7 && barriers.horizontal[x-1][y+1]) numberNeighbors++;
           if (         y < 7 && barriers.horizontal[x  ][y+1]) numberNeighbors++;
           if (x < 7 && y < 7 && barriers.horizontal[x+1][y+1]) numberNeighbors++;
-        }
-        if ((numberNeighbors > 1) || ((x == 0 || x == 7 || y == 0 || y == 7) && numberNeighbors > 0)) {
-          // ToDo : check if placing a barrier here blocks the game
-          // If it does, then set the move as illegal
-          bool is_blocking;
-          barriers.horizontal[x][y] = true;
-          is_blocking = false; // ToDo replace
-          if (is_blocking) legalBarrierPlacemenent.horizontal[x][y] = false;
-          barriers.horizontal[x][y] = false;
 
-          barriers.vertical[x][y] = true;
-          is_blocking = false; // ToDo replace
-          if (is_blocking) legalBarrierPlacemenent.vertical[x][y] = false;
-          barriers.vertical[x][y] = false;
+          if ((numberNeighbors > 1) || ((x == 0 || x == 7 || y == 0 || y == 7) && numberNeighbors > 0)) {
+            // If placing this barrier blocks the game, then set the move as illegal
+            barriers.vertical[x][y] = true;
+            is_blocking  = agent.getMinDistancePlayer(*this, true ) == 255; // White blocked
+            is_blocking |= agent.getMinDistancePlayer(*this, false) == 255; // Black blocked
+            if (is_blocking) legalBarrierPlacemenent.vertical[x][y] = false;
+            barriers.vertical[x][y] = false;
+          }
         }
       }
     }
