@@ -639,10 +639,11 @@ void QuoridorBoard::debug_setRandomBarriers() {
   uniform_int_distribution<> rand_0_1(0, 1);
 
   // Random number of barrier to try to add
-  uint8_t number_barriers = rand_0_20(randgen);
+  uint8_t number_barriers_trial = rand_0_20(randgen);
+  uint8_t number_barriers_real = 0;
 
   // Place barriers at random positions, if inval then drop (no retry)
-  for (int barrier = 0; barrier < number_barriers; ++barrier) {
+  for (int barrier = 0; barrier < number_barriers_trial; ++barrier) {
     // Update legal moves after each barrier placed
     legalBarrierPlacemenent = get_legalBarrierPlacements();
     // Random orientation, true=horizontal false=vertical
@@ -651,11 +652,28 @@ void QuoridorBoard::debug_setRandomBarriers() {
     uint8_t x = rand_0_7(randgen);
     uint8_t y = rand_0_7(randgen);
     // Check if legal and add the barrier
-    if (orientation && legalBarrierPlacemenent.horizontal[x][y])
+    if (orientation && legalBarrierPlacemenent.horizontal[x][y]) {
       barriers.horizontal[x][y] = true;
-    else if (legalBarrierPlacemenent.vertical[x][y])
+      number_barriers_real++;
+    }
+    else if (legalBarrierPlacemenent.vertical[x][y]) {
       barriers.vertical[x][y] = true;
+      number_barriers_real++;
+    }
   }
+
+  // Randomly discount the placed barriers from either players
+  uniform_int_distribution<> rand_placed_by_white( number_barriers_real > 10 ? number_barriers_real - 10 : 0 , number_barriers_real > 10 ? 10 : number_barriers_real);
+  uint8_t rand_number_barrier_placed_by_white = rand_placed_by_white(randgen);
+  uint8_t rand_number_barrier_placed_by_black = number_barriers_real - rand_number_barrier_placed_by_white;
+  players[0].barriers_left = 10 - rand_number_barrier_placed_by_white;
+  players[1].barriers_left = 10 - rand_number_barrier_placed_by_black;
+
+  std::cout << "number_barriers_trial=" << +number_barriers_trial << std::endl;
+  std::cout << "number_barriers_real=" << +number_barriers_real << std::endl;
+  std::cout << "rand_number_barrier_placed_by_white=" << +rand_number_barrier_placed_by_white << std::endl;
+  std::cout << "rand_number_barrier_placed_by_black=" << +rand_number_barrier_placed_by_black << std::endl;
+
 }
 
 void QuoridorBoard::debug_setRandomPlayerPositions() {
