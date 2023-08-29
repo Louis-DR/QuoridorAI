@@ -7,6 +7,11 @@ Graph::Graph(Array2D<Array2D<bool,9>,9> adjacencyTables) {
 
 Graph::~Graph() {}
 
+
+std::pair<uint8_t, uint8_t> Graph::nodeId2Coords(uint8_t node){
+    return std::pair<uint8_t, uint8_t>(node % this->final_line_size, node / this->final_line_size);
+}
+
 void Graph::addEdge(uint8_t i, uint8_t j) {
     std::pair<uint8_t, uint8_t> coords_i = this->nodeId2Coords(i);
     std::pair<uint8_t, uint8_t> coords_j = this->nodeId2Coords(j);
@@ -42,6 +47,7 @@ bool Graph::isNodeOnFinishLine(std::pair<uint8_t, uint8_t> node, bool is_first_p
     if (is_first_player) {
         //std::cout << "node.second "<< +node.second << endl;
         return node.second == 8;
+    }
     else {
         return node.second == 0;
     }
