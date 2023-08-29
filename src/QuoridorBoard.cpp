@@ -84,23 +84,27 @@ void QuoridorBoard::print(PrintArgs args) {
               std::cout << "━";
           }
           else {
-            std::cout << "   ";
+            std::cout << " ";
             // Draw the cross point
+            if (x == 0 || (x > 1 && barriers.horizontal[x-2][y-1]))
+              std::cout << " ";
             if (x != 8) {
               if ((y != 0 && barriers.vertical[x][y-1]))
-                std::cout << "┃";
+                std::cout << " ┃ ";
               else if (args.legal_barrier_enable)
                 if (legalBarrierPlacemenent.horizontal[x][y-1])
                   if (legalBarrierPlacemenent.vertical[x][y-1])
-                    std::cout << "┼";
+                    std::cout << "╶┼╴";
                   else
-                    std::cout << "─";
+                    std::cout << "╶─╴";
                 else if (legalBarrierPlacemenent.vertical[x][y-1])
-                  std::cout << "│";
+                  std::cout << " │";
                 else
-                  std::cout << "·";
+                  std::cout << " · ";
               else
-                std::cout << "·";
+                std::cout << " · ";
+            } else {
+              std::cout << " ";
             }
           }
         // Cross grid style
