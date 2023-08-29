@@ -71,7 +71,9 @@ void QuoridorBoard::print(PrintArgs args) {
             std::cout << "━━╸";
             // Draw the cross point
             if (x != 8) {
-              if (args.legal_barrier_enable && legalBarrierPlacemenent.vertical[x-1][y-1])
+              if (barriers.vertical[x][y-1])
+                std::cout << "┃";
+              else if (args.legal_barrier_enable && legalBarrierPlacemenent.vertical[x][y-1])
                 std::cout << "│";
               else
                 std::cout << "·";
@@ -87,7 +89,7 @@ void QuoridorBoard::print(PrintArgs args) {
             std::cout << "   ";
             // Draw the cross point
             if (x != 8) {
-              if ((y != 0 && barriers.vertical[x][y-1]))
+              if (barriers.vertical[x][y-1])
                 std::cout << "┃";
               else if (args.legal_barrier_enable)
                 if (legalBarrierPlacemenent.horizontal[x][y-1])
