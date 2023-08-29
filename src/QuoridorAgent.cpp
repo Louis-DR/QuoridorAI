@@ -1,8 +1,7 @@
 #include "QuoridorAgent.hpp"
 
-QuoridorAgent::QuoridorAgent(bool is_player1)
+QuoridorAgent::QuoridorAgent()
 {
-    this->is_player1 = is_player1;
 }
 
 QuoridorAgent::~QuoridorAgent()

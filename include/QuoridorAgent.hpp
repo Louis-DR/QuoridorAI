@@ -8,10 +8,9 @@ using namespace std;
 
 class QuoridorAgent
 {
-    bool is_player1;
 
 public:
-    QuoridorAgent(bool is_player1);
+    QuoridorAgent();
     ~QuoridorAgent();
     void    nextMove(QuoridorBoard game);
     int8_t  isGameFinished(QuoridorBoard game, bool is_first_player);
