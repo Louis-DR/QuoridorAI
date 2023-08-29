@@ -95,14 +95,14 @@ int8_t QuoridorAgent::minimax(QuoridorBoard game, uint8_t alpha, uint8_t beta, u
 
 int8_t QuoridorAgent::evaluationHeuristic(QuoridorBoard game, bool is_first_player)
 {
-    Graph graph = Graph(81);
+    Graph graph = Graph(game.get_adjacencyTables());
     Player player1 = game.players[0];
     Player player2 = game.players[1];
 
     int8_t position_node_player1 = graph.coords2NodeId(player1.position_x, player1.position_y);
     int8_t position_node_player2 = graph.coords2NodeId(player2.position_x, player2.position_y);
-    int8_t min_distance_player1 = graph.getMinDistance(position_node_player1, true);
-    int8_t min_distance_player2 = graph.getMinDistance(position_node_player2, false);
+    int8_t min_distance_player1 = graph.getMinDistance(std::pair<uint8_t, uint8_t>(player1.position_x, player1.position_y), true);
+    int8_t min_distance_player2 = graph.getMinDistance(std::pair<uint8_t, uint8_t>(player2.position_x, player2.position_y), false);
     int8_t num_barriers_player1 = player1.barriers_left;
     int8_t num_barriers_player2 = player2.barriers_left;
 
@@ -115,5 +115,17 @@ int8_t QuoridorAgent::evaluationHeuristic(QuoridorBoard game, bool is_first_play
     else
     {
         return -value;
+    }
+}
+
+uint8_t QuoridorAgent::getMinDistancePlayer(QuoridorBoard game, bool is_first_player){
+    Graph graph = Graph(game.get_adjacencyTables());
+    Player player1 = game.players[0];
+    Player player2 = game.players[1];
+    if (is_first_player){
+        return graph.getMinDistance(std::pair<uint8_t, uint8_t>(player1.position_x, player1.position_y), true);
+    }
+    else{
+        return graph.getMinDistance(std::pair<uint8_t, uint8_t>(player2.position_x, player2.position_y), false);
     }
 }

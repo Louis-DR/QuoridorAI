@@ -8,6 +8,8 @@
 #include <math.h>
 #include <limits.h>
 #include <set>
+#include <QuoridorBoard.hpp>
+#include <utility>
 
 using namespace std;
 
@@ -15,19 +17,20 @@ class Graph
 {
 private:
     uint8_t vertexCount;
-    std::vector<bool> visited;
-    std::vector<std::vector<bool>> adjMatrix;
-    std::vector<int8_t> distance;
-    std::vector<uint8_t> parent;
+    Array2D<bool,9> visited;
+    Array2D<Array2D<bool,9>,9> adjacencyTables;
+    Array2D<uint8_t,9> distance;
+    Array2D<uint8_t,9> parent;
     uint8_t final_line_size;
 
 public:
-    Graph(uint8_t vertexCount);
+    Graph(Array2D<Array2D<bool,9>,9> adjacencyTables);
     ~Graph();
-    int8_t getMinDistance(uint8_t startNode, bool is_first_player, std::set<uint8_t> stopping_nodes = set<uint8_t>());
+    uint8_t getMinDistance(std::pair<uint8_t, uint8_t> startNode, bool is_first_player, std::set<std::pair<uint8_t, uint8_t>> stopping_nodes = set<std::pair<uint8_t, uint8_t>>());
     void addEdge(uint8_t i, uint8_t j);
     void removeEdge(uint8_t i, uint8_t j);
-    std::vector<uint8_t> getNeighbors(uint8_t node);
+    std::vector<std::pair<uint8_t, uint8_t>>  getNeighbors(std::pair<uint8_t, uint8_t>  node_coords);
     uint8_t coords2NodeId(uint8_t x, uint8_t y);
-    bool isNodeOnFinishLine(uint8_t node, bool is_first_player);
+    bool isNodeOnFinishLine(std::pair<uint8_t, uint8_t> node, bool is_first_player);
+    std::pair<uint8_t, uint8_t> nodeId2Coords(uint8_t node);
 };

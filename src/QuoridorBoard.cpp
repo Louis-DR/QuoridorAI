@@ -184,18 +184,14 @@ Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTables() {
             if(adversary_x >= 0 && adversary_x <= 8){// Check if out-of-bounds
               int8_t delta = main_player_x - adversary_x;// Travel direction
               if (adjacencyTables[main_player_x][main_player_y][main_player_x + delta][main_player_y]) {// Check if presence of barrier
-                // adjacencyTables[main_player_x][main_player_y][adversary_x][adversary_y] = false;
                 adjacencyTables[adversary_x][adversary_y][main_player_x][main_player_y] = false;
                 adjacencyTables[adversary_x][adversary_y][main_player_x + delta][main_player_y] = true;
-                // adjacencyTables[main_player_x + delta][main_player_y][adversary_x][adversary_y] = true;
               }
               else { // If presence of barrier
                 for (int8_t i = -1; i < 2; i += 2) { // Check lateral cells access
                   if (main_player_y + i >= 0 && main_player_y + i <= 8 && adjacencyTables[main_player_x][main_player_y][main_player_x][main_player_y + i]) {
-                    // adjacencyTables[main_player_x][main_player_y][adversary_x][adversary_y] = false;
                     adjacencyTables[adversary_x][adversary_y][main_player_x][main_player_y] = false;
                     adjacencyTables[adversary_x][adversary_y][main_player_x][main_player_y + i] = true;
-                    // adjacencyTables[main_player_x][main_player_y + i][adversary_x][adversary_y] = true;
                   }
                 }
               }
@@ -207,17 +203,13 @@ Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTables() {
           int8_t delta = main_player_y - adversary_y;// Travel direction
             if (adversary_y >= 0 && adversary_y <= 8 ){ // Check if out-of-bound
             if (main_player_y + delta >= 0 && delta + main_player_y <= 8 && adjacencyTables[main_player_x][main_player_y][main_player_x][delta + main_player_y]) {// Check if presence of barrier
-              // adjacencyTables[main_player_x][main_player_y][adversary_x][adversary_y] = false;
               adjacencyTables[adversary_x][adversary_y][main_player_x][main_player_y] = false;
               adjacencyTables[adversary_x][adversary_y][main_player_x][main_player_y + delta] = true;
-              // adjacencyTables[main_player_x][main_player_y + delta][adversary_x][adversary_y] = true;
             }
             else {
               for (int8_t i = -1; i < 2; i += 2) { // Check lateral cells access
                 if (main_player_x + i >= 0 && main_player_x + i <= 8 && adjacencyTables[main_player_x][main_player_y][main_player_x + i][main_player_y]) {
-                  // adjacencyTables[main_player_x][main_player_y][adversary_x][adversary_y] = false;
                   adjacencyTables[adversary_x][adversary_y][main_player_x][main_player_y] = false;
-                  // adjacencyTables[main_player_x + i][main_player_y][adversary_x][adversary_y] = true;
                   adjacencyTables[adversary_x][adversary_y][main_player_x + i][main_player_y] = true;
                 }
               }
