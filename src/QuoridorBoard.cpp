@@ -59,14 +59,40 @@ void QuoridorBoard::print(PrintArgs args) {
       std::cout << "  ┠";
       // Iterate over columns from left to right
       for (int x = 0; x < 9; ++x) {
-        // Draw the veritcal barrier
-        if ((x != 0 && barriers.horizontal[x - 1][y - 1]) || (x != 8 && barriers.horizontal[x][y - 1]))
-          std::cout << "╼━╾";
-        else
-          std::cout << "╴ ╶";
-        // Draw the cross point
-        if (x != 8)
-          std::cout << "┼";
+        if (config.print_dot_grid || args.legal_barrier_enable) {
+          // Draw the horizontal barrier
+          if (x != 0 && barriers.horizontal[x - 1][y - 1]) {
+            std::cout << "━━╸";
+            // Draw the cross point
+            if (x != 8)
+              std::cout << "·";
+          }
+          else if (x != 8 && barriers.horizontal[x][y - 1]) {
+            std::cout << "╺━━";
+            // Draw the cross point
+            if (x != 8)
+              std::cout << "━";
+          }
+          else {
+            std::cout << "   ";
+            // Draw the cross point
+            if (x != 8) {
+              if ((y != 0 && barriers.vertical[x][y - 1]))
+                std::cout << "┃";
+              else
+                std::cout << "·";
+            }
+          }
+        } else {
+          // Draw the horizontal barrier
+          if ((x != 0 && barriers.horizontal[x - 1][y - 1]) || (x != 8 && barriers.horizontal[x][y - 1]))
+            std::cout << "╼━╾";
+          else
+            std::cout << "╴ ╶";
+          // Draw the cross point
+          if (x != 8)
+            std::cout << "┼";
+        }
       }
       // Right edge
       std::cout << "┨ " << y - 1 << "\n";
@@ -305,13 +331,21 @@ void QuoridorBoard::startInteractiveMode() {
       if (cmd_config_key == "auto_print") {
         if (cmd_config_val == "true" || cmd_config_val == "1") {
           config.interactive_auto_print = true;
-        }
-        else if (cmd_config_val == "false" || cmd_config_val == "0") {
+        } else if (cmd_config_val == "false" || cmd_config_val == "0") {
           config.interactive_auto_print = false;
-        }
-        else {
+        } else {
           std::cout << "ERROR: Invalid value '" << cmd_config_val << "' for configuration option '" << cmd_config_key << "'." << std::endl;
         }
+      } else if (cmd_config_key == "dot_grid") {
+        if (cmd_config_val == "true" || cmd_config_val == "1") {
+          config.print_dot_grid = true;
+        } else if (cmd_config_val == "false" || cmd_config_val == "0") {
+          config.print_dot_grid = false;
+        } else {
+          std::cout << "ERROR: Invalid value '" << cmd_config_val << "' for configuration option '" << cmd_config_key << "'." << std::endl;
+        }
+      } else {
+        std::cout << "ERROR: Unknown configuration option '" << cmd_config_key << "'." << std::endl;
       }
     }
 
@@ -412,9 +446,10 @@ void QuoridorBoard::startInteractiveMode() {
       } else {
         std::cout << "ERROR: Unknown sub-command '" << cmd_subop << "' for command 'barrier'." << endl;
       }
+    }
 
     // Modify players
-    } else if (cmd_op == "player") {
+    else if (cmd_op == "player") {
       // Must provide sub-command
       if (cmd_len < 2) {
         std::cout << "ERROR: Not enough arguments for command 'player'." << endl;
@@ -452,9 +487,10 @@ void QuoridorBoard::startInteractiveMode() {
       } else {
         std::cout << "ERROR: Unknown sub-command '" << cmd_subop << "' for command 'player'." << endl;
       }
+    }
 
     // Print the board with possible destinations from a source position
-    } else if (cmd_op == "adjacent") {
+    else if (cmd_op == "adjacent") {
       // Must provide the source position
       if (cmd_len < 3) {
         std::cout << "ERROR: Not enough arguments for command 'adjacent'." << endl;
@@ -464,8 +500,25 @@ void QuoridorBoard::startInteractiveMode() {
       uint8_t cmd_y = stoi(cmd_split[2]);
       print({.adjacent_table_enable=true, .adjacent_table_x=cmd_x, .adjacent_table_y=cmd_y});
 
+    // Print the board with possible destinations from a source position
+    } else if (cmd_op == "legal") {
+      // Must provide the source position
+      if (cmd_len < 2) {
+        std::cout << "ERROR: Not enough arguments for command 'legal'." << endl;
+        continue;
+      }
+      string cmd_subop = cmd_split[1];
+      // Show legal barrier placements
+      if (cmd_subop == "barrier") {
+        print({.legal_barrier_enable=true});
+      // Invalid sub-command
+      } else {
+        std::cout << "ERROR: Unknown sub-command '" << cmd_subop << "' for command 'legal'." << endl;
+      }
+    }
+
     // Invalid command
-    } else {
+    else {
       std::cout << "ERROR: Unknown command '" << cmd_op << "'." << endl;
     }
 

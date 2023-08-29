@@ -24,12 +24,14 @@ struct Player {
 
 struct BoardConfig {
   bool interactive_auto_print = false;
+  bool print_dot_grid = false;
 };
 
 struct PrintArgs {
-  bool adjacent_table_enable = false;
-  uint8_t adjacent_table_x = 0;
-  uint8_t adjacent_table_y = 0;
+  bool    adjacent_table_enable = false;
+  uint8_t adjacent_table_x      = 0;
+  uint8_t adjacent_table_y      = 0;
+  bool    legal_barrier_enable  = false;
 };
 
 class QuoridorBoard {
