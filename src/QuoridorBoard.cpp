@@ -572,6 +572,57 @@ BarrierGrid QuoridorBoard::get_legalBarrierPlacements() {
   return legalBarrierPlacemenent;
 }
 
+vector<Move> QuoridorBoard::get_legalMoves(bool playerIsWhite) {
+  vector<Move> legalMoves;
+
+  // Legal player movement from adjacency table
+  Array2D<Array2D<bool,9>,9> adjacencyTables = get_adjacencyTables();
+  uint8_t player_x = playerIsWhite ? players[0].position_x : players[1].position_x;
+  uint8_t player_y = playerIsWhite ? players[0].position_y : players[1].position_y;
+  for (size_t x = max(0, player_x - 2); x <= min(8, player_x + 3); x++) {
+    for (size_t y = max(0, player_y -2); y <= min(8, player_y + 3); y++) {
+      if (adjacencyTables[player_x][player_y][x][y]) {
+        Move legalMove;
+        legalMove.isBarrierPlacement        = false;
+        legalMove.player_isWhite            = playerIsWhite;
+        legalMove.player_originalPosition_x = player_x;
+        legalMove.player_originalPosition_y = player_y;
+        legalMove.player_movePosition_x     = x;
+        legalMove.player_movePosition_y     = y;
+        legalMoves.push_back(legalMove);
+      }
+    }
+  }
+
+  // Legal barrier placement if the player has enough barriers left
+  uint8_t player_barriersLeft = playerIsWhite ? players[0].barriers_left : players[1].barriers_left;
+  if (player_barriersLeft != 0) {
+    BarrierGrid legalBarrierPlacemenent = get_legalBarrierPlacements();
+    for (size_t x = 0; x < 8; x++) {
+      for (size_t y = 0; y < 8; y++) {
+        if (legalBarrierPlacemenent.horizontal[x][y]) {
+          Move legalMove;
+          legalMove.isBarrierPlacement   = true;
+          legalMove.barrier_isHorizontal = true;
+          legalMove.barrier_position_x   = x;
+          legalMove.barrier_position_y   = y;
+          legalMoves.push_back(legalMove);
+        }
+        if (legalBarrierPlacemenent.vertical[x][y]) {
+          Move legalMove;
+          legalMove.isBarrierPlacement   = true;
+          legalMove.barrier_isHorizontal = false;
+          legalMove.barrier_position_x   = x;
+          legalMove.barrier_position_y   = y;
+          legalMoves.push_back(legalMove);
+        }
+      }
+    }
+  }
+
+  return legalMoves;
+}
+
 void QuoridorBoard::doMove(Move move) {
   if (move.isBarrierPlacement) {
     if (move.barrier_isHorizontal) {

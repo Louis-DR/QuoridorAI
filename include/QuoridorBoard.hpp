@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <vector>
 #include <cstdint>
 #include <iostream>
 #include <string>
@@ -63,6 +64,7 @@ public:
 
   Array2D<Array2D<bool,9>,9> get_adjacencyTables();
   BarrierGrid                get_legalBarrierPlacements();
+  vector<Move>               get_legalMoves(bool playerIsWhite);
 
   void doMove(Move move);
   void undoMove(Move move);
