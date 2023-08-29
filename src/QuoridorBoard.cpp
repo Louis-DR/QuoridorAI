@@ -617,22 +617,32 @@ void QuoridorBoard::debug_setRandomBarriers() {
 
   std::cout << "DEBUG: Placing barriers at random locations." << endl;
 
+  // Grid of legal moves
+  BarrierGrid legalBarrierPlacemenent;
+
+  // Random number generators
   random_device randseed;
   mt19937 randgen{ randseed() };
   uniform_int_distribution<> rand_0_20(0, 20);
   uniform_int_distribution<> rand_0_7(0, 7);
   uniform_int_distribution<> rand_0_1(0, 1);
 
+  // Random number of barrier to try to add
   uint8_t number_barriers = rand_0_20(randgen);
 
-  // Place barriers at random positions without checking for any overlap
+  // Place barriers at random positions, if inval then drop (no retry)
   for (int barrier = 0; barrier < number_barriers; ++barrier) {
+    // Update legal moves after each barrier placed
+    legalBarrierPlacemenent = get_legalBarrierPlacements();
+    // Random orientation, true=horizontal false=vertical
     bool orientation = rand_0_1(randgen);
+    // Random position
     uint8_t x = rand_0_7(randgen);
     uint8_t y = rand_0_7(randgen);
-    if (orientation)
+    // Check if legal and add the barrier
+    if (orientation && legalBarrierPlacemenent.horizontal[x][y])
       barriers.horizontal[x][y] = true;
-    else
+    else if (legalBarrierPlacemenent.vertical[x][y])
       barriers.vertical[x][y] = true;
   }
 }
