@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <memory>
 #include <random>
 
 using namespace std;

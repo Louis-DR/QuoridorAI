@@ -1,4 +1,5 @@
 #include "QuoridorBoard.hpp"
+#include "QuoridorAgent.hpp"
 
 QuoridorBoard::QuoridorBoard() {
   // Init barrier tables to zeros
@@ -530,6 +531,29 @@ void QuoridorBoard::startInteractiveMode() {
       } else {
         std::cout << "ERROR: Unknown sub-command '" << cmd_subop << "' for command 'legal'." << endl;
       }
+    }
+
+    // Distance to reach winning line
+    else if (cmd_op == "distance") {
+      QuoridorAgent agent(true);
+
+      // Must provide sub-command
+      if (cmd_len < 2) {
+        std::cout << "Distance for white player : " << agent.getMinDistancePlayer(*this, true) << endl;
+        std::cout << "Distance for black player : " << agent.getMinDistancePlayer(*this, false) << endl;
+      }
+        // string cmd_player_select = cmd_split[1];
+        // if (cmd_player_select == "white" || cmd_player_select == "w" || cmd_player_select == "0") {
+        //   players[0].position_x = cmd_x;
+        //   players[0].position_y = cmd_y;
+        // }
+        // else if (cmd_player_select == "black" || cmd_player_select == "b" || cmd_player_select == "1") {
+        //   players[1].position_x = cmd_x;
+        //   players[1].position_y = cmd_y;
+        // }
+        // else {
+        //   std::cout << "ERROR: Invalid player selector '" << cmd_player_select << "' for command 'player move'." << endl;
+        // }
     }
 
     // Invalid command
