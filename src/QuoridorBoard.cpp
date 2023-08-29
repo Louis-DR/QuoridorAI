@@ -255,14 +255,15 @@ void QuoridorBoard::startInteractiveMode() {
       if (cmd_len < 2) {
         std::cout << "Distance for white player : " << unsigned(agent.getMinDistancePlayer(*this, true)) << endl;
         std::cout << "Distance for black player : " << unsigned(agent.getMinDistancePlayer(*this, false)) << endl;
+      } else {
+        string cmd_player_select = cmd_split[1];
+        if (cmd_player_select == "white" || cmd_player_select == "w" || cmd_player_select == "0")
+          std::cout << "Distance for white player : " << unsigned(agent.getMinDistancePlayer(*this, true)) << endl;
+        else if (cmd_player_select == "black" || cmd_player_select == "b" || cmd_player_select == "1")
+          std::cout << "Distance for black player : " << unsigned(agent.getMinDistancePlayer(*this, false)) << endl;
+        else
+          std::cout << "ERROR: Invalid player selector '" << cmd_player_select << "' for command 'player move'." << endl;
       }
-      string cmd_player_select = cmd_split[1];
-      if (cmd_player_select == "white" || cmd_player_select == "w" || cmd_player_select == "0")
-        std::cout << "Distance for white player : " << unsigned(agent.getMinDistancePlayer(*this, true)) << endl;
-      else if (cmd_player_select == "black" || cmd_player_select == "b" || cmd_player_select == "1")
-        std::cout << "Distance for black player : " << unsigned(agent.getMinDistancePlayer(*this, false)) << endl;
-      else
-        std::cout << "ERROR: Invalid player selector '" << cmd_player_select << "' for command 'player move'." << endl;
     }
 
     // Invalid command
