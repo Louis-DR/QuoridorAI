@@ -36,8 +36,25 @@ int8_t QuoridorAgent::isGameFinished(QuoridorBoard game, bool is_first_player)
         return 1;
 }
 
-int8_t QuoridorAgent::minimax(QuoridorBoard game, uint8_t alpha, uint8_t beta, uint8_t depth, bool is_first_player, bool is_max_node)
-{
+struct QuoridorAgent::get_bestMove(QuoridorBoard game, std::vector<struct> moves, bool is_first_player, uint8_t depth){
+    uint8_t bestMoveIndex = -1;
+    int8_t alpha = -127;
+    int8_t beta = 127;
+    for (uint8_t i = 0; i < moves.size(); i++)
+    {
+        game.doMove(moves[i])
+        int8_t value = this->minimax(game, alpha, beta, depth - 1, is_first_player, false);
+        game.undoMove(moves[i])
+        if (value > alpha)
+        {
+            bestMoveIndex = i;
+            alpha = value;
+        }
+    }
+    return moves[bestMoveIndex];
+}
+
+int8_t QuoridorAgent::minimax(QuoridorBoard game, uint8_t alpha, uint8_t beta, uint8_t depth, bool is_first_player, bool is_max_node){
     int8_t gameFinished = this->isGameFinished(game = game, is_first_player = is_first_player);
     if (gameFinished == 127 || gameFinished == -127)
     {
@@ -47,48 +64,42 @@ int8_t QuoridorAgent::minimax(QuoridorBoard game, uint8_t alpha, uint8_t beta, u
     {
         return this->evaluationHeuristic(game = game, is_first_player = is_first_player);
     }
-    else
-    {
-        return 0;
-        //     if (is_max_node)
-        //     {
-        //         int8_t maxEval = -127;
-        //         for (uint8_t i = 0; i < 81; i++)
-        //         {
-        //             if (game.isValidMove(i, is_first_player))
-        //             {
-        //                 QuoridorBoard new_game = game;
-        //                 new_game.movePlayer(i, is_first_player);
-        //                 int8_t eval = this->minimax(new_game, alpha, beta, depth - 1, is_first_player, false);
-        //                 maxEval = max(maxEval, eval);
-        //                 alpha = max(alpha, eval);
-        //                 if (beta <= alpha)
-        //                 {
-        //                     break;
-        //                 }
-        //             }
-        //         }
-        //         return maxEval;
-        //     }
-        //     else
-        //     {
-        //         int8_t minEval = 127;
-        //         for (uint8_t i = 0; i < 81; i++)
-        //         {
-        //             if (game.isValidMove(i, is_first_player))
-        //             {
-        //                 QuoridorBoard new_game = game;
-        //                 new_game.movePlayer(i, is_first_player);
-        //                 int8_t eval = this->minimax(new_game, alpha, beta, depth - 1, is_first_player, true);
-        //                 minEval = min(minEval, eval);
-        //                 beta = min(beta, eval);
-        //                 if (beta <= alpha)
-        //                 {
-        //                     break;
-        //                 }
-        //             }
-        //         }
-        // return minEval;
+    else {
+        if (is_max_node) {
+            int8_t maxEval = -127;
+            std::vector<struct> moves = game.get_legalMoves(is_first_player);
+            for (uint8_t i = 0; i < moves.size(); i++)
+            {
+                game.doMove(moves[i])
+                int8_t value = this->minimax(game, alpha, beta, depth - 1, is_first_player, false);
+                game.undoMove(moves[i])
+                maxEval = max(maxEval, value);
+                if (beta <= maxEval)
+                {
+                    return maxEval;
+                }
+                alpha = max(alpha, value);
+            }
+            return maxEval;
+        }
+        else {
+                int8_t minEval = 127;
+                std::vector<struct> moves = game.get_legalMoves(is_first_player);
+                for (uint8_t i = 0; i < moves.size(); i++)
+                {
+                    game.doMove(moves[i])
+                    int8_t value = this->minimax(game, alpha, beta, depth - 1, is_first_player, true);
+                    game.undoMove(moves[i])
+                    minEval = min(minEval, value);
+                    if (beta <= minEval)
+                    {
+                        return minEval;
+                    }
+                    beta = min(beta, value);
+                }
+
+            return minEval;
+        }
     }
 }
 

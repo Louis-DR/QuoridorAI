@@ -9,6 +9,7 @@
 #include <memory>
 #include <random>
 #include <algorithm>
+#include <QuoridorBoard.hpp>
 
 using namespace std;
 
