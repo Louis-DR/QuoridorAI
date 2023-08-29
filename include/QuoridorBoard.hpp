@@ -9,11 +9,13 @@
 #include <memory>
 #include <random>
 #include <algorithm>
-#include <QuoridorBoard.hpp>
+#include <functional>
 
 using namespace std;
 
 template <class T, size_t N> using Array2D = array<array<T,N>,N>;
+
+uint64_t array8x8bool_to_uint64(Array2D<bool,8> array8x8bool);
 
 struct BarrierGrid {
   Array2D<bool,8> horizontal;
@@ -59,6 +61,8 @@ public:
   BarrierGrid     barriers;
   array<Player,2> players;
   BoardConfig     config;
+
+  bool operator==(const QuoridorBoard &other) const;
 
   void                       startInteractiveMode();
   void                       print(PrintArgs args = PrintArgs());

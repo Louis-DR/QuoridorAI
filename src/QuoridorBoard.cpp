@@ -19,6 +19,51 @@ QuoridorBoard::QuoridorBoard() {
 
 QuoridorBoard::~QuoridorBoard() {}
 
+uint64_t array8x8bool_to_uint64(Array2D<bool,8> array8x8bool) {
+  uint64_t uint64   = 0;
+  size_t   bitcount = 0;
+  for (size_t x = 0; x < 8; x++) {
+    for (size_t y = 0; y < 8; y++) {
+      uint64 &= array8x8bool[x][y] << bitcount;
+      bitcount++;
+    }
+  }
+  return uint64;
+}
+
+bool QuoridorBoard::operator==(const QuoridorBoard &other) const {
+  return (   array8x8bool_to_uint64(this->barriers.horizontal) == array8x8bool_to_uint64(other.barriers.horizontal)
+          && array8x8bool_to_uint64(this->barriers.vertical)   == array8x8bool_to_uint64(other.barriers.vertical)
+          && this->players[0].position_x                       == other.players[0].position_x
+          && this->players[0].position_y                       == other.players[0].position_y
+          && this->players[0].barriers_left                    == other.players[0].barriers_left
+          && this->players[1].position_x                       == other.players[1].position_x
+          && this->players[1].position_y                       == other.players[1].position_y
+          && this->players[1].barriers_left                    == other.players[1].barriers_left );
+}
+
+template <> struct std::hash<QuoridorBoard> {
+  size_t operator()(const QuoridorBoard& board) const {
+    uint64_t barriers_horizontal    = array8x8bool_to_uint64(board.barriers.horizontal);
+    uint64_t barriers_vertical      = array8x8bool_to_uint64(board.barriers.vertical);
+    uint8_t  player_0_position_x    = board.players[0].position_x;
+    uint8_t  player_0_position_y    = board.players[0].position_y;
+    uint8_t  player_0_barriers_left = board.players[0].barriers_left;
+    uint8_t  player_1_position_x    = board.players[1].position_x;
+    uint8_t  player_1_position_y    = board.players[1].position_y;
+    uint8_t  player_1_barriers_left = board.players[1].barriers_left;
+    uint64_t players = (uint64_t(player_0_position_x   )       )
+                     + (uint64_t(player_0_position_y   ) <<  8 )
+                     + (uint64_t(player_0_barriers_left) << 16 )
+                     + (uint64_t(player_1_position_x   ) << 32 )
+                     + (uint64_t(player_1_position_y   ) << 40 )
+                     + (uint64_t(player_1_barriers_left) << 48 );
+    return (  hash<uint64_t>()(barriers_horizontal)
+            ^ hash<uint64_t>()(barriers_vertical)
+            ^ hash<uint64_t>()(players) );
+  }
+};
+
 void QuoridorBoard::startInteractiveMode() {
   std::cout << "Starting interactive mode." << endl;
 
@@ -569,6 +614,7 @@ BarrierGrid QuoridorBoard::get_legalBarrierPlacements() {
       }
     }
   }
+
   return legalBarrierPlacemenent;
 }
 
