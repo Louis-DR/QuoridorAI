@@ -36,6 +36,19 @@ struct PrintArgs {
   bool    legal_barrier_enable  = false;
 };
 
+// Move that can be undone
+struct Move {
+  bool isBarrierPlacement; // Else it is a player move
+  bool player_isWhite; // Else is black player
+  uint8_t player_originalPosition_x;
+  uint8_t player_originalPosition_y;
+  uint8_t player_movePosition_x;
+  uint8_t player_movePosition_y;
+  bool barrier_isHorizontal; // Else is vertical
+  uint8_t barrier_position_x;
+  uint8_t barrier_position_y;
+};
+
 class QuoridorBoard {
 public:
   QuoridorBoard();
@@ -50,6 +63,9 @@ public:
 
   Array2D<Array2D<bool,9>,9> get_adjacencyTables();
   BarrierGrid                get_legalBarrierPlacements();
+
+  void doMove(Move move);
+  void undoMove(Move move);
 
   void debug_checkInvalidStates();
   void debug_clearBarriers();

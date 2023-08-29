@@ -569,8 +569,43 @@ BarrierGrid QuoridorBoard::get_legalBarrierPlacements() {
       }
     }
   }
-
   return legalBarrierPlacemenent;
+}
+
+void QuoridorBoard::doMove(Move move) {
+  if (move.isBarrierPlacement) {
+    if (move.barrier_isHorizontal) {
+      barriers.horizontal[move.barrier_position_x][move.barrier_position_y] = true;
+    } else {
+      barriers.vertical[move.barrier_position_x][move.barrier_position_y] = true;
+    }
+  } else { // Else player movement
+    if (move.player_isWhite) {
+      players[0].position_x = move.player_movePosition_x;
+      players[0].position_y = move.player_movePosition_y;
+    } else {
+      players[1].position_x = move.player_movePosition_x;
+      players[1].position_y = move.player_movePosition_y;
+    }
+  }
+}
+
+void QuoridorBoard::undoMove(Move move) {
+  if (move.isBarrierPlacement) {
+    if (move.barrier_isHorizontal) {
+      barriers.horizontal[move.barrier_position_x][move.barrier_position_y] = false;
+    } else {
+      barriers.vertical[move.barrier_position_x][move.barrier_position_y] = false;
+    }
+  } else { // Else player movement
+    if (move.player_isWhite) {
+      players[0].position_x = move.player_originalPosition_x;
+      players[0].position_y = move.player_originalPosition_y;
+    } else {
+      players[1].position_x = move.player_originalPosition_x;
+      players[1].position_y = move.player_originalPosition_y;
+    }
+  }
 }
 
 void QuoridorBoard::debug_checkInvalidStates() {
