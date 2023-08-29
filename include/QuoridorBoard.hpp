@@ -45,11 +45,11 @@ public:
   array<Player,2> players;
   BoardConfig     config;
 
-  void print(PrintArgs args = PrintArgs());
-  Array2D<Array2D<bool,9>,9> get_adjacencyTables();
-  BarrierGrid get_legalBarrierPlacements();
+  void                       startInteractiveMode();
+  void                       print(PrintArgs args = PrintArgs());
 
-  void startInteractiveMode();
+  Array2D<Array2D<bool,9>,9> get_adjacencyTables();
+  BarrierGrid                get_legalBarrierPlacements();
 
   void debug_checkInvalidStates();
   void debug_clearBarriers();
