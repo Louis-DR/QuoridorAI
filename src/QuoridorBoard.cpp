@@ -19,10 +19,15 @@ QuoridorBoard::QuoridorBoard() {
 QuoridorBoard::~QuoridorBoard() {}
 
 void QuoridorBoard::print(PrintArgs args) {
-  // If enabling drawing of adjacency table, then compute it
-  Array2D<bool,9> adjacency_table;
+  // If drawing adjacency table, then compute it
+  Array2D<bool,9> adjacencyTable;
   if (args.adjacent_table_enable)
-    adjacency_table = get_adjacencyTables()[args.adjacent_table_x][args.adjacent_table_y];
+    adjacencyTable = get_adjacencyTables()[args.adjacent_table_x][args.adjacent_table_y];
+
+  // If drawing legal barrier moves, then compute them
+  BarrierGrid legalBarrierPlacemenent;
+  if (args.legal_barrier_enable)
+    legalBarrierPlacemenent = get_legalBarrierPlacements();
 
   // Top row
   std::cout << "      0   1   2   3   4   5   6   7    \n";
@@ -38,13 +43,13 @@ void QuoridorBoard::print(PrintArgs args) {
         std::cout << " ○ ";
       else if (x == players[1].position_x && y == players[1].position_y)
         std::cout << " ● ";
-      else if (args.adjacent_table_enable && adjacency_table[x][y])
+      else if (args.adjacent_table_enable && adjacencyTable[x][y])
         std::cout << " ⦾ ";
       else
         std::cout << "   ";
       // If not at the last column, draw the veritcal barrier
       if (x != 8) {
-        if ((y != 0 && barriers.vertical[x][y - 1]) || (y != 8 && barriers.vertical[x][y]))
+        if ((y != 0 && barriers.vertical[x][y-1]) || (y != 8 && barriers.vertical[x][y]))
           std::cout << "┃";
         else
           std::cout << " ";
@@ -59,15 +64,20 @@ void QuoridorBoard::print(PrintArgs args) {
       std::cout << "  ┠";
       // Iterate over columns from left to right
       for (int x = 0; x < 9; ++x) {
+        // Dot grid style
         if (config.print_dot_grid || args.legal_barrier_enable) {
           // Draw the horizontal barrier
-          if (x != 0 && barriers.horizontal[x - 1][y - 1]) {
+          if (x != 0 && barriers.horizontal[x-1][y-1]) {
             std::cout << "━━╸";
             // Draw the cross point
-            if (x != 8)
-              std::cout << "·";
+            if (x != 8) {
+              if (args.legal_barrier_enable && legalBarrierPlacemenent.vertical[x-1][y-1])
+                std::cout << "│";
+              else
+                std::cout << "·";
+            }
           }
-          else if (x != 8 && barriers.horizontal[x][y - 1]) {
+          else if (x != 8 && barriers.horizontal[x][y-1]) {
             std::cout << "╺━━";
             // Draw the cross point
             if (x != 8)
@@ -77,15 +87,26 @@ void QuoridorBoard::print(PrintArgs args) {
             std::cout << "   ";
             // Draw the cross point
             if (x != 8) {
-              if ((y != 0 && barriers.vertical[x][y - 1]))
+              if ((y != 0 && barriers.vertical[x][y-1]))
                 std::cout << "┃";
+              else if (args.legal_barrier_enable)
+                if (legalBarrierPlacemenent.horizontal[x][y-1])
+                  if (legalBarrierPlacemenent.vertical[x][y-1])
+                    std::cout << "┼";
+                  else
+                    std::cout << "─";
+                else if (legalBarrierPlacemenent.vertical[x][y-1])
+                  std::cout << "│";
+                else
+                  std::cout << "·";
               else
                 std::cout << "·";
             }
           }
+        // Cross grid style
         } else {
           // Draw the horizontal barrier
-          if ((x != 0 && barriers.horizontal[x - 1][y - 1]) || (x != 8 && barriers.horizontal[x][y - 1]))
+          if ((x != 0 && barriers.horizontal[x-1][y-1]) || (x != 8 && barriers.horizontal[x][y-1]))
             std::cout << "╼━╾";
           else
             std::cout << "╴ ╶";
