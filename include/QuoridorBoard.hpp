@@ -45,7 +45,7 @@ public:
   array<Player,2> players;
   BoardConfig     config;
 
-  void print(PrintArgs args = {});
+  void print(PrintArgs args = PrintArgs());
   Array2D<Array2D<bool,9>,9> get_adjacencyTables();
   BarrierGrid get_legalBarrierPlacements();
 
