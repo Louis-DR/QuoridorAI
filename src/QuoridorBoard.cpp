@@ -249,18 +249,18 @@ void QuoridorBoard::startInteractiveMode() {
 
     // Distance to reach winning line
     else if (cmd_op == "distance") {
-      QuoridorAgent agent();
+      QuoridorAgent agent{};
 
       // Must provide sub-command
       if (cmd_len < 2) {
-        std::cout << "Distance for white player : " << unsigned(agent.getMinDistancePlayer(*this, true)) << endl;
-        std::cout << "Distance for black player : " << unsigned(agent.getMinDistancePlayer(*this, false)) << endl;
+        std::cout << "Distance for white player : " << +agent.getMinDistancePlayer(*this, true) << endl;
+        std::cout << "Distance for black player : " << +agent.getMinDistancePlayer(*this, false) << endl;
       } else {
         string cmd_player_select = cmd_split[1];
         if (cmd_player_select == "white" || cmd_player_select == "w" || cmd_player_select == "0")
-          std::cout << "Distance for white player : " << unsigned(agent.getMinDistancePlayer(*this, true)) << endl;
+          std::cout << "Distance for white player : " << +agent.getMinDistancePlayer(*this, true) << endl;
         else if (cmd_player_select == "black" || cmd_player_select == "b" || cmd_player_select == "1")
-          std::cout << "Distance for black player : " << unsigned(agent.getMinDistancePlayer(*this, false)) << endl;
+          std::cout << "Distance for black player : " << +agent.getMinDistancePlayer(*this, false) << endl;
         else
           std::cout << "ERROR: Invalid player selector '" << cmd_player_select << "' for command 'player move'." << endl;
       }
@@ -521,7 +521,7 @@ BarrierGrid QuoridorBoard::get_legalBarrierPlacements() {
         // Or a no neighbor barrier at all if also touching the edge of the grid
         bool is_blocking;
         uint8_t numberNeighbors;
-        QuoridorAgent agent(true);
+        QuoridorAgent agent{};
         if (legalBarrierPlacemenent.horizontal[x][y]) {
           numberNeighbors = 0;
           if (x > 1          && barriers.horizontal[x-2][y  ]) numberNeighbors++;
