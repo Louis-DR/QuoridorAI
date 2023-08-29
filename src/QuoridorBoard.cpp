@@ -249,7 +249,7 @@ void QuoridorBoard::startInteractiveMode() {
 
     // Distance to reach winning line
     else if (cmd_op == "distance") {
-      QuoridorAgent agent(true);
+      QuoridorAgent agent();
 
       // Must provide sub-command
       if (cmd_len < 2) {
