@@ -328,10 +328,24 @@ void QuoridorBoard::startInteractiveMode() {
       string cmd_subop = cmd_split[1];
       // Play next move by the computer
       if (cmd_subop == "next") {
+        uint8_t numberMoves = (cmd_len > 2) ? stoi(cmd_split[2]) : 1;
         QuoridorAgent agent{};
-        Move bestMove = agent.get_bestMove(*this, get_legalMoves(whitesTurn), whitesTurn, config.ai_minimax_depth);
-        doMove(bestMove);
-        whitesTurn = !whitesTurn;
+        for (size_t i = 0; i < numberMoves; ++i) {
+          Move bestMove = agent.get_bestMove(*this, get_legalMoves(whitesTurn), whitesTurn, config.ai_minimax_depth);
+          doMove(bestMove);
+          whitesTurn = !whitesTurn;
+        }
+      } else if (cmd_subop == "auto") {
+        QuoridorAgent agent{};
+        uint8_t numberMoves = (cmd_len > 2) ? stoi(cmd_split[2]) : 1;
+        for (size_t i = 0; i < numberMoves; ++i) {
+          Move bestMove = agent.get_bestMove(*this, get_legalMoves(whitesTurn), whitesTurn, whitesTurn ? 2 : 4);
+          // Move bestMove = agent.get_bestMove(*this, get_legalMoves(whitesTurn), whitesTurn, config.ai_minimax_depth);
+          doMove(bestMove);
+          whitesTurn = !whitesTurn;
+          print();
+          std::this_thread::sleep_for(1000ms);
+        }
       // Invalid sub-command
       } else {
         std::cout << "ERROR: Unknown sub-command '" << cmd_subop << "' for command 'ai'." << endl;
@@ -738,6 +752,23 @@ void QuoridorBoard::undoMove(Move move) {
     } else {
       players[1].position_x = move.player_originalPosition_x;
       players[1].position_y = move.player_originalPosition_y;
+    }
+  }
+}
+
+void QuoridorBoard::debug_printMove(Move move, uint8_t indent) {
+  for (size_t i = 0; i < indent; ++i) cout << "  ";
+  if (move.isBarrierPlacement) {
+    if (move.barrier_isHorizontal) {
+      cout << "barrier(horizontal," << +move.barrier_position_x << "," << +move.barrier_position_y << ")" << endl;
+    } else {
+      cout << "barrier(vertical," << +move.barrier_position_x << "," << +move.barrier_position_y << ")" << endl;
+    }
+  } else { // Else player movement
+    if (move.player_isWhite) {
+      cout << "move(white," << +move.player_movePosition_x << "," << +move.player_movePosition_y << ")" << endl;
+    } else {
+      cout << "move(black," << +move.player_movePosition_x << "," << +move.player_movePosition_y << ")" << endl;
     }
   }
 }

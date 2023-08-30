@@ -10,6 +10,8 @@
 #include <random>
 #include <algorithm>
 #include <functional>
+#include <chrono>
+#include <thread>
 
 using namespace std;
 
@@ -75,6 +77,7 @@ public:
 
   void doMove(Move move);
   void undoMove(Move move);
+  void debug_printMove(Move move, uint8_t indent = 0);
 
   void debug_checkInvalidStates();
   void debug_clearBarriers();
