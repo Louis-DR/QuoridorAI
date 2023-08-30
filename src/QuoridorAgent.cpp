@@ -36,7 +36,7 @@ int8_t QuoridorAgent::isGameFinished(QuoridorBoard game, bool is_first_player)
         return 1;
 }
 
-Move QuoridorAgent::get_bestMove(QuoridorBoard game, std::vector<Move> moves, bool is_first_player, uint8_t depth){
+Move QuoridorAgent::get_bestMove(QuoridorBoard game, vector<Move> moves, bool is_first_player, uint8_t depth){
     uint8_t bestMoveIndex = -1;
     int8_t alpha = -127;
     int8_t beta = 127;

@@ -42,7 +42,7 @@ bool QuoridorBoard::operator==(const QuoridorBoard &other) const {
           && this->players[1].barriers_left                    == other.players[1].barriers_left );
 }
 
-template <> struct std::hash<QuoridorBoard> {
+template <> struct hash<QuoridorBoard> {
   size_t operator()(const QuoridorBoard& board) const {
     uint64_t barriers_horizontal    = array8x8bool_to_uint64(board.barriers.horizontal);
     uint64_t barriers_vertical      = array8x8bool_to_uint64(board.barriers.vertical);
