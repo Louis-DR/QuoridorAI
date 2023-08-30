@@ -707,9 +707,11 @@ void QuoridorBoard::doMove(Move move) {
     if (move.player_isWhite) {
       players[0].position_x = move.player_movePosition_x;
       players[0].position_y = move.player_movePosition_y;
+      players[0].barriers_left--;
     } else {
       players[1].position_x = move.player_movePosition_x;
       players[1].position_y = move.player_movePosition_y;
+      players[1].barriers_left--;
     }
   }
 }
@@ -725,9 +727,11 @@ void QuoridorBoard::undoMove(Move move) {
     if (move.player_isWhite) {
       players[0].position_x = move.player_originalPosition_x;
       players[0].position_y = move.player_originalPosition_y;
+      players[0].barriers_left++;
     } else {
       players[1].position_x = move.player_originalPosition_x;
       players[1].position_y = move.player_originalPosition_y;
+      players[1].barriers_left++;
     }
   }
 }
