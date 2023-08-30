@@ -339,8 +339,8 @@ void QuoridorBoard::startInteractiveMode() {
         QuoridorAgent agent{};
         uint8_t numberMoves = (cmd_len > 2) ? stoi(cmd_split[2]) : 1;
         for (size_t i = 0; i < numberMoves; ++i) {
-          Move bestMove = agent.get_bestMove(*this, get_legalMoves(whitesTurn), whitesTurn, whitesTurn ? 2 : 4);
-          // Move bestMove = agent.get_bestMove(*this, get_legalMoves(whitesTurn), whitesTurn, config.ai_minimax_depth);
+          // Move bestMove = agent.get_bestMove(*this, get_legalMoves(whitesTurn), whitesTurn, whitesTurn ? 2 : 4);
+          Move bestMove = agent.get_bestMove(*this, get_legalMoves(whitesTurn), whitesTurn, config.ai_minimax_depth);
           doMove(bestMove);
           whitesTurn = !whitesTurn;
           print();

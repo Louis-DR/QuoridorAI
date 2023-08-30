@@ -58,14 +58,9 @@ Move QuoridorAgent::get_bestMove(QuoridorBoard game, vector<Move> moves, bool is
 }
 
 int8_t QuoridorAgent::minimax(QuoridorBoard game, int8_t alpha, int8_t beta, uint8_t depth, bool is_first_player, bool is_max_node, uint8_t indent){
-    int8_t gameFinished = this->isGameFinished(game = game, is_first_player = is_first_player);
-    if (gameFinished == 81 || gameFinished == -81)
+    if (depth == 0)
     {
-        return gameFinished;
-    }
-    else if (depth == 0)
-    {
-        int8_t moveValue = evaluationHeuristic(game = game, is_first_player = is_first_player);
+        int8_t moveValue = evaluationHeuristic(game, is_first_player);
         return moveValue;
     }
     else {
@@ -119,6 +114,10 @@ int8_t QuoridorAgent::minimax(QuoridorBoard game, int8_t alpha, int8_t beta, uin
 
 int8_t QuoridorAgent::evaluationHeuristic(QuoridorBoard game, bool is_first_player)
 {
+    int8_t gameFinished = this->isGameFinished(game, is_first_player);
+    if (gameFinished == 81 || gameFinished == -81)
+        return gameFinished;
+
     Graph graph = Graph(game.get_adjacencyTables());
     Player player1 = game.players[0];
     Player player2 = game.players[1];
@@ -130,8 +129,8 @@ int8_t QuoridorAgent::evaluationHeuristic(QuoridorBoard game, bool is_first_play
     int8_t num_barriers_player1 = player1.barriers_left;
     int8_t num_barriers_player2 = player2.barriers_left;
 
-    // int8_t value = min_distance_player2 - min_distance_player1 + 1 * (num_barriers_player1 - num_barriers_player2);
-    int8_t value = min_distance_player2 - min_distance_player1;
+    int8_t value = min_distance_player2 - min_distance_player1 + 2 * (num_barriers_player1 - num_barriers_player2);
+    // int8_t value = min_distance_player2 - min_distance_player1;
 
     if (is_first_player)
     {
