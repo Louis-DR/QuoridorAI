@@ -361,7 +361,7 @@ void QuoridorBoard::print(PrintArgs args) {
     legalBarrierPlacemenent = get_legalBarrierPlacements();
 
   // Top row with black player barriers to place
-  std::cout << "      0   1   2   3   4   5   6   7     ●:" << unsigned(players[1].barriers_left) << "\n";
+  std::cout << "      0   1   2   3   4   5   6   7    " << (whitesTurn ? " " : "►") << "●:" << unsigned(players[1].barriers_left) << "\n";
   std::cout << "  ┏━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┯━━━┓\n";
   // Iterate over rows from top to bottom
   for (int y = 8; y >= 0; --y) {
@@ -454,7 +454,7 @@ void QuoridorBoard::print(PrintArgs args) {
   }
   // Bottom row
   std::cout << "  ┗━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┷━━━┛\n";
-  std::cout << "    0   1   2   3   4   5   6   7   8   ○:" << unsigned(players[0].barriers_left) << endl;
+  std::cout << "    0   1   2   3   4   5   6   7   8  " << (whitesTurn ? "►" : " ") << "○:" << unsigned(players[0].barriers_left) << endl;
 }
 
 Array2D<Array2D<bool,9>,9> QuoridorBoard::get_adjacencyTables() {
@@ -676,6 +676,7 @@ vector<Move> QuoridorBoard::get_legalMoves(bool playerIsWhite) {
         if (legalBarrierPlacemenent.horizontal[x][y]) {
           Move legalMove;
           legalMove.isBarrierPlacement   = true;
+          legalMove.player_isWhite       = playerIsWhite;
           legalMove.barrier_isHorizontal = true;
           legalMove.barrier_position_x   = x;
           legalMove.barrier_position_y   = y;
@@ -684,6 +685,7 @@ vector<Move> QuoridorBoard::get_legalMoves(bool playerIsWhite) {
         if (legalBarrierPlacemenent.vertical[x][y]) {
           Move legalMove;
           legalMove.isBarrierPlacement   = true;
+          legalMove.player_isWhite       = playerIsWhite;
           legalMove.barrier_isHorizontal = false;
           legalMove.barrier_position_x   = x;
           legalMove.barrier_position_y   = y;
@@ -703,15 +705,17 @@ void QuoridorBoard::doMove(Move move) {
     } else {
       barriers.vertical[move.barrier_position_x][move.barrier_position_y] = true;
     }
+    if (move.player_isWhite)
+      players[0].barriers_left--;
+    else
+      players[1].barriers_left--;
   } else { // Else player movement
     if (move.player_isWhite) {
       players[0].position_x = move.player_movePosition_x;
       players[0].position_y = move.player_movePosition_y;
-      players[0].barriers_left--;
     } else {
       players[1].position_x = move.player_movePosition_x;
       players[1].position_y = move.player_movePosition_y;
-      players[1].barriers_left--;
     }
   }
 }
@@ -723,15 +727,17 @@ void QuoridorBoard::undoMove(Move move) {
     } else {
       barriers.vertical[move.barrier_position_x][move.barrier_position_y] = false;
     }
+    if (move.player_isWhite)
+      players[0].barriers_left++;
+    else
+      players[1].barriers_left++;
   } else { // Else player movement
     if (move.player_isWhite) {
       players[0].position_x = move.player_originalPosition_x;
       players[0].position_y = move.player_originalPosition_y;
-      players[0].barriers_left++;
     } else {
       players[1].position_x = move.player_originalPosition_x;
       players[1].position_y = move.player_originalPosition_y;
-      players[1].barriers_left++;
     }
   }
 }
