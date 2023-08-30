@@ -61,6 +61,7 @@ public:
   BarrierGrid     barriers;
   array<Player,2> players;
   BoardConfig     config;
+  bool            whitesTurn;
 
   bool operator==(const QuoridorBoard &other) const;
 

@@ -15,6 +15,9 @@ QuoridorBoard::QuoridorBoard() {
   // Init barrier counts to 10 for both players
   players[0].barriers_left = 10;
   players[1].barriers_left = 10;
+
+  // White is first player
+  whitesTurn = true;
 }
 
 QuoridorBoard::~QuoridorBoard() {}
@@ -168,9 +171,10 @@ void QuoridorBoard::startInteractiveMode() {
         debug_setRandomPlayerPositions();
         debug_setRandomBarriers();
       }
+    }
 
     // Modify barriers
-    } else if (cmd_op == "barrier") {
+    else if (cmd_op == "barrier") {
       // Must have a sub-command
       if (cmd_len < 2) {
         std::cout << "ERROR: Not enough arguments for command 'barrier'." << endl;
@@ -274,10 +278,11 @@ void QuoridorBoard::startInteractiveMode() {
       uint8_t cmd_x = stoi(cmd_split[1]);
       uint8_t cmd_y = stoi(cmd_split[2]);
       print({.adjacent_table_enable=true, .adjacent_table_x=cmd_x, .adjacent_table_y=cmd_y});
+    }
 
     // Print the board with possible destinations from a source position
-    } else if (cmd_op == "legal") {
-      // Must provide the source position
+    else if (cmd_op == "legal") {
+      // Must provide sub-command
       if (cmd_len < 2) {
         std::cout << "ERROR: Not enough arguments for command 'legal'." << endl;
         continue;
@@ -308,6 +313,26 @@ void QuoridorBoard::startInteractiveMode() {
           std::cout << "Distance for black player : " << +agent.getMinDistancePlayer(*this, false) << endl;
         else
           std::cout << "ERROR: Invalid player selector '" << cmd_player_select << "' for command 'player move'." << endl;
+      }
+    }
+
+    // Print the board with possible destinations from a source position
+    else if (cmd_op == "ai") {
+      // Must provide sub-command
+      if (cmd_len < 2) {
+        std::cout << "ERROR: Not enough arguments for command 'ai'." << endl;
+        continue;
+      }
+      string cmd_subop = cmd_split[1];
+      // Play next move by the computer
+      if (cmd_subop == "next") {
+        QuoridorAgent agent{};
+        Move bestMove = agent.get_bestMove(*this, get_legalMoves(whitesTurn), whitesTurn, 1);
+        doMove(bestMove);
+        whitesTurn = !whitesTurn;
+      // Invalid sub-command
+      } else {
+        std::cout << "ERROR: Unknown sub-command '" << cmd_subop << "' for command 'ai'." << endl;
       }
     }
 
