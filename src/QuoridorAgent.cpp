@@ -42,10 +42,8 @@ Move QuoridorAgent::get_bestMove(QuoridorBoard game, vector<Move> moves, bool is
     int8_t beta = 100;
     for (uint8_t i = 0; i < moves.size(); i++)
     {
-        cout << "EVALUATING depth=" << +depth << " move_i=" << i+1 << "/" << +moves.size() << " start" << endl;
-        game.debug_printMove(moves[i]);
         game.doMove(moves[i]);
-        int8_t value = this->minimax(game, alpha, beta, depth - 1, is_first_player, false, 1);
+        int8_t value = this->minimax(game, alpha, beta, depth - 1, is_first_player, false);
         game.undoMove(moves[i]);
         if (value > alpha)
         {
@@ -53,11 +51,10 @@ Move QuoridorAgent::get_bestMove(QuoridorBoard game, vector<Move> moves, bool is
             alpha = value;
         }
     }
-    cout << "BEST MOVE VALUE = " << +alpha << endl;
     return moves[bestMoveIndex];
 }
 
-int8_t QuoridorAgent::minimax(QuoridorBoard game, int8_t alpha, int8_t beta, uint8_t depth, bool is_first_player, bool is_max_node, uint8_t indent){
+int8_t QuoridorAgent::minimax(QuoridorBoard game, int8_t alpha, int8_t beta, uint8_t depth, bool is_first_player, bool is_max_node){
     if (depth == 0)
     {
         int8_t moveValue = evaluationHeuristic(game, is_first_player);
@@ -69,13 +66,8 @@ int8_t QuoridorAgent::minimax(QuoridorBoard game, int8_t alpha, int8_t beta, uin
             std::vector<Move> moves = game.get_legalMoves(is_first_player);
             for (uint8_t i = 0; i < moves.size(); i++)
             {
-                for (size_t i = 0; i < indent; ++i) cout << "  ";
-                cout << "EVALUATING depth=" << +depth << " move_i=" << i+1 << "/" << +moves.size() << " max" << endl;
-                game.debug_printMove(moves[i], indent);
                 game.doMove(moves[i]);
-                int8_t value = this->minimax(game, alpha, beta, depth - 1, is_first_player, false, indent+1);
-                for (size_t i = 0; i < indent; ++i) cout << "  ";
-                cout << "value=" << +value << endl;
+                int8_t value = this->minimax(game, alpha, beta, depth - 1, is_first_player, false);
                 game.undoMove(moves[i]);
                 maxEval = max(maxEval, value);
                 if (maxEval >= beta)
@@ -91,14 +83,9 @@ int8_t QuoridorAgent::minimax(QuoridorBoard game, int8_t alpha, int8_t beta, uin
                 std::vector<Move> moves = game.get_legalMoves(!is_first_player);
                 for (uint8_t i = 0; i < moves.size(); i++)
                 {
-                    for (size_t i = 0; i < indent; ++i) cout << "  ";
-                    cout << "EVALUATING depth=" << +depth << " move_i=" << i+1 << "/" << +moves.size() << " min" << endl;
-                    game.debug_printMove(moves[i]);
                     game.doMove(moves[i]);
-                    int8_t value = this->minimax(game, alpha, beta, depth - 1, is_first_player, true, indent+1);
+                    int8_t value = this->minimax(game, alpha, beta, depth - 1, is_first_player, true);
                     game.undoMove(moves[i]);
-                    for (size_t i = 0; i < indent; ++i) cout << "  ";
-                    cout << "value=" << +value << endl;
                     minEval = min(minEval, value);
                     if (minEval <= alpha)
                     {
