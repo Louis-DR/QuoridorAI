@@ -122,6 +122,8 @@ void QuoridorBoard::startInteractiveMode() {
         } else {
           std::cout << "ERROR: Invalid value '" << cmd_config_val << "' for configuration option '" << cmd_config_key << "'." << std::endl;
         }
+      } else if (cmd_config_key == "ai_depth") {
+        config.ai_minimax_depth = stoi(cmd_config_val);
       } else {
         std::cout << "ERROR: Unknown configuration option '" << cmd_config_key << "'." << std::endl;
       }
@@ -327,7 +329,7 @@ void QuoridorBoard::startInteractiveMode() {
       // Play next move by the computer
       if (cmd_subop == "next") {
         QuoridorAgent agent{};
-        Move bestMove = agent.get_bestMove(*this, get_legalMoves(whitesTurn), whitesTurn, 1);
+        Move bestMove = agent.get_bestMove(*this, get_legalMoves(whitesTurn), whitesTurn, config.ai_minimax_depth);
         doMove(bestMove);
         whitesTurn = !whitesTurn;
       // Invalid sub-command

@@ -31,6 +31,7 @@ struct Player {
 struct BoardConfig {
   bool interactive_auto_print = false;
   bool print_dot_grid = false;
+  uint8_t ai_minimax_depth = 1;
 };
 
 struct PrintArgs {
