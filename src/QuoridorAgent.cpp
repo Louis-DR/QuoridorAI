@@ -78,7 +78,7 @@ int8_t QuoridorAgent::minimax(QuoridorBoard game, int8_t alpha, int8_t beta, uin
                 cout << "value=" << +value << endl;
                 game.undoMove(moves[i]);
                 maxEval = max(maxEval, value);
-                if (beta <= maxEval)
+                if (maxEval >= beta)
                 {
                     return maxEval;
                 }
@@ -100,7 +100,7 @@ int8_t QuoridorAgent::minimax(QuoridorBoard game, int8_t alpha, int8_t beta, uin
                     for (size_t i = 0; i < indent; ++i) cout << "  ";
                     cout << "value=" << +value << endl;
                     minEval = min(minEval, value);
-                    if (beta <= minEval)
+                    if (minEval <= alpha)
                     {
                         return minEval;
                     }

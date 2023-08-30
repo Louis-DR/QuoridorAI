@@ -1,5 +1,5 @@
 CC      := g++
-C_FLAGS := -std=c++17 -O3
+C_FLAGS := -std=c++17 -O3 -fpermissive
 
 BIN     := bin
 SRC     := src
