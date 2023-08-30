@@ -339,12 +339,14 @@ void QuoridorBoard::startInteractiveMode() {
         QuoridorAgent agent{};
         uint8_t numberMoves = (cmd_len > 2) ? stoi(cmd_split[2]) : 1;
         for (size_t i = 0; i < numberMoves; ++i) {
+          if (agent.isGameFinished(*this, whitesTurn)) break;
           Move bestMove = agent.get_bestMove(*this, get_legalMoves(whitesTurn), whitesTurn, config.ai_minimax_depth);
           doMove(bestMove);
           whitesTurn = !whitesTurn;
           print();
           std::this_thread::sleep_for(1000ms);
         }
+        cout << "Average search speed : " << agent.get_averageSearchSpeed() << "position/s" << std::endl;
       // Invalid sub-command
       } else {
         std::cout << "ERROR: Unknown sub-command '" << cmd_subop << "' for command 'ai'." << endl;

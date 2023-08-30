@@ -33,17 +33,20 @@ int8_t QuoridorAgent::isGameFinished(QuoridorBoard game, bool is_first_player)
             return 81;
         }
     else
-        return 1;
+        return 0;
 }
 
 Move QuoridorAgent::get_bestMove(QuoridorBoard game, vector<Move> moves, bool is_first_player, uint8_t depth){
+    auto chrono_start = chrono::high_resolution_clock::now();
+    uint32_t numberPositionSearched = 0;
     uint8_t bestMoveIndex = 0;
     int8_t alpha = -100;
     int8_t beta = 100;
     for (uint8_t i = 0; i < moves.size(); i++)
     {
         game.doMove(moves[i]);
-        int8_t value = this->minimax(game, alpha, beta, depth - 1, is_first_player, false);
+        numberPositionSearched++;
+        int8_t value = this->minimax(game, alpha, beta, depth - 1, is_first_player, false, numberPositionSearched);
         game.undoMove(moves[i]);
         if (value > alpha)
         {
@@ -51,10 +54,17 @@ Move QuoridorAgent::get_bestMove(QuoridorBoard game, vector<Move> moves, bool is
             alpha = value;
         }
     }
+    auto chrono_stop = chrono::high_resolution_clock::now();
+    chrono::duration<float> chrono_duration = chrono_stop - chrono_start;
+    float searchSpeed = float(numberPositionSearched)/chrono_duration.count();
+    cout << "numberPositionSearched=" << +numberPositionSearched << endl;
+    cout << "searchDuration=" << chrono_duration.count() << "s" << endl;
+    cout << "searchSpeed=" << searchSpeed << "position/s" << endl;
+    searchSpeeds.push_back(searchSpeed);
     return moves[bestMoveIndex];
 }
 
-int8_t QuoridorAgent::minimax(QuoridorBoard game, int8_t alpha, int8_t beta, uint8_t depth, bool is_first_player, bool is_max_node){
+int8_t QuoridorAgent::minimax(QuoridorBoard game, int8_t alpha, int8_t beta, uint8_t depth, bool is_first_player, bool is_max_node, uint32_t& numberPositionSearched){
     if (depth == 0)
     {
         int8_t moveValue = evaluationHeuristic(game, is_first_player);
@@ -67,7 +77,8 @@ int8_t QuoridorAgent::minimax(QuoridorBoard game, int8_t alpha, int8_t beta, uin
             for (uint8_t i = 0; i < moves.size(); i++)
             {
                 game.doMove(moves[i]);
-                int8_t value = this->minimax(game, alpha, beta, depth - 1, is_first_player, false);
+                numberPositionSearched++;
+                int8_t value = this->minimax(game, alpha, beta, depth - 1, is_first_player, false, numberPositionSearched);
                 game.undoMove(moves[i]);
                 maxEval = max(maxEval, value);
                 if (maxEval >= beta)
@@ -79,20 +90,21 @@ int8_t QuoridorAgent::minimax(QuoridorBoard game, int8_t alpha, int8_t beta, uin
             return maxEval;
         }
         else {
-                int8_t minEval = 100;
-                std::vector<Move> moves = game.get_legalMoves(!is_first_player);
-                for (uint8_t i = 0; i < moves.size(); i++)
+            int8_t minEval = 100;
+            std::vector<Move> moves = game.get_legalMoves(!is_first_player);
+            for (uint8_t i = 0; i < moves.size(); i++)
+            {
+                game.doMove(moves[i]);
+                numberPositionSearched++;
+                int8_t value = this->minimax(game, alpha, beta, depth - 1, is_first_player, true, numberPositionSearched);
+                game.undoMove(moves[i]);
+                minEval = min(minEval, value);
+                if (minEval <= alpha)
                 {
-                    game.doMove(moves[i]);
-                    int8_t value = this->minimax(game, alpha, beta, depth - 1, is_first_player, true);
-                    game.undoMove(moves[i]);
-                    minEval = min(minEval, value);
-                    if (minEval <= alpha)
-                    {
-                        return minEval;
-                    }
-                    beta = min(beta, value);
+                    return minEval;
                 }
+                beta = min(beta, value);
+            }
 
             return minEval;
         }
@@ -117,16 +129,13 @@ int8_t QuoridorAgent::evaluationHeuristic(QuoridorBoard game, bool is_first_play
     int8_t num_barriers_player2 = player2.barriers_left;
 
     int8_t value = min_distance_player2 - min_distance_player1 + 2 * (num_barriers_player1 - num_barriers_player2);
-    // int8_t value = min_distance_player2 - min_distance_player1;
 
     if (is_first_player)
     {
-        cout << "  min_distance_player1=" << +min_distance_player1 << endl;
         return value;
     }
     else
     {
-        cout << "  min_distance_player2=" << +min_distance_player2 << endl;
         return -value;
     }
 }
@@ -141,4 +150,9 @@ uint8_t QuoridorAgent::getMinDistancePlayer(QuoridorBoard game, bool is_first_pl
     else{
         return graph.getMinDistance(std::pair<uint8_t, uint8_t>(player2.position_x, player2.position_y), false);
     }
+}
+
+float QuoridorAgent::get_averageSearchSpeed() {
+    if (searchSpeeds.empty()) return 0;
+    return reduce(searchSpeeds.begin(), searchSpeeds.end()) / searchSpeeds.size();
 }
