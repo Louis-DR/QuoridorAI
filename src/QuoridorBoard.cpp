@@ -650,8 +650,8 @@ BarrierGrid QuoridorBoard::get_legalBarrierPlacements() {
   return legalBarrierPlacemenent;
 }
 
-vector<Move> QuoridorBoard::get_legalMoves(bool playerIsWhite) {
-  vector<Move> legalMoves;
+unordered_set<Move> QuoridorBoard::get_legalMoves(bool playerIsWhite) {
+  unordered_set<Move> legalMoves;
 
   // Legal player movement from adjacency table
   Array2D<Array2D<bool,9>,9> adjacencyTables = get_adjacencyTables();
@@ -667,7 +667,7 @@ vector<Move> QuoridorBoard::get_legalMoves(bool playerIsWhite) {
         legalMove.player_originalPosition_y = player_y;
         legalMove.player_movePosition_x     = x;
         legalMove.player_movePosition_y     = y;
-        legalMoves.push_back(legalMove);
+        legalMoves.insert(legalMove);
       }
     }
   }
@@ -685,7 +685,7 @@ vector<Move> QuoridorBoard::get_legalMoves(bool playerIsWhite) {
           legalMove.barrier_isHorizontal = true;
           legalMove.barrier_position_x   = x;
           legalMove.barrier_position_y   = y;
-          legalMoves.push_back(legalMove);
+          legalMoves.insert(legalMove);
         }
         if (legalBarrierPlacemenent.vertical[x][y]) {
           Move legalMove;
@@ -694,7 +694,7 @@ vector<Move> QuoridorBoard::get_legalMoves(bool playerIsWhite) {
           legalMove.barrier_isHorizontal = false;
           legalMove.barrier_position_x   = x;
           legalMove.barrier_position_y   = y;
-          legalMoves.push_back(legalMove);
+          legalMoves.insert(legalMove);
         }
       }
     }
