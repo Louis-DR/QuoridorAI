@@ -34,7 +34,7 @@ uint64_t array8x8bool_to_uint64(Array2D<bool,8> array8x8bool) {
   return uint64;
 }
 
-bool QuoridorBoard::operator==(const QuoridorBoard &other) const {
+bool QuoridorBoard::operator==(const QuoridorBoard& other) const {
   return (   array8x8bool_to_uint64(this->barriers.horizontal) == array8x8bool_to_uint64(other.barriers.horizontal)
           && array8x8bool_to_uint64(this->barriers.vertical)   == array8x8bool_to_uint64(other.barriers.vertical)
           && this->players[0].position_x                       == other.players[0].position_x
@@ -45,27 +45,17 @@ bool QuoridorBoard::operator==(const QuoridorBoard &other) const {
           && this->players[1].barriers_left                    == other.players[1].barriers_left );
 }
 
-template <> struct hash<QuoridorBoard> {
-  size_t operator()(const QuoridorBoard& board) const {
-    uint64_t barriers_horizontal    = array8x8bool_to_uint64(board.barriers.horizontal);
-    uint64_t barriers_vertical      = array8x8bool_to_uint64(board.barriers.vertical);
-    uint8_t  player_0_position_x    = board.players[0].position_x;
-    uint8_t  player_0_position_y    = board.players[0].position_y;
-    uint8_t  player_0_barriers_left = board.players[0].barriers_left;
-    uint8_t  player_1_position_x    = board.players[1].position_x;
-    uint8_t  player_1_position_y    = board.players[1].position_y;
-    uint8_t  player_1_barriers_left = board.players[1].barriers_left;
-    uint64_t players = ( uint64_t(player_0_position_x   )       )
-                     + ( uint64_t(player_0_position_y   ) <<  8 )
-                     + ( uint64_t(player_0_barriers_left) << 16 )
-                     + ( uint64_t(player_1_position_x   ) << 32 )
-                     + ( uint64_t(player_1_position_y   ) << 40 )
-                     + ( uint64_t(player_1_barriers_left) << 48 );
-    return (  hash<uint64_t>()(barriers_horizontal)
-            ^ hash<uint64_t>()(barriers_vertical)
-            ^ hash<uint64_t>()(players) );
-  }
-};
+bool Move::operator==(const Move& other) const {
+  return (   this->isBarrierPlacement        == other.isBarrierPlacement
+          && this->player_isWhite            == other.player_isWhite
+          && this->player_originalPosition_x == other.player_originalPosition_x
+          && this->player_originalPosition_y == other.player_originalPosition_y
+          && this->player_movePosition_x     == other.player_movePosition_x
+          && this->player_movePosition_y     == other.player_movePosition_y
+          && this->barrier_isHorizontal      == other.barrier_isHorizontal
+          && this->barrier_position_x        == other.barrier_position_x
+          && this->barrier_position_y        == other.barrier_position_y );
+}
 
 void QuoridorBoard::startInteractiveMode() {
   std::cout << "Starting interactive mode." << endl;
